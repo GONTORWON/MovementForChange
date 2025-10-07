@@ -92,9 +92,14 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-white/10 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/60">
-            <p data-testid="footer-copyright">
-              &copy; {currentYear} Movement for Change and Empowering Future Leaders (MCEFL). All rights reserved.
-            </p>
+            <div className="text-center md:text-left">
+              <p data-testid="footer-copyright">
+                &copy; {currentYear} Movement for Change and Empowering Future Leaders (MCEFL). All rights reserved.
+              </p>
+              <p className="text-xs mt-1" data-testid="footer-developer">
+                Web Developer: <span className="text-secondary">One Purpose Graphics Media Inc.</span>
+              </p>
+            </div>
             <div className="flex gap-6">
               <a href="#" className="hover:text-primary transition-colors" data-testid="footer-legal-privacy">Privacy Policy</a>
               <a href="#" className="hover:text-primary transition-colors" data-testid="footer-legal-terms">Terms of Service</a>
