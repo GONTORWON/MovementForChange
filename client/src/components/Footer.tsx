@@ -96,8 +96,8 @@ export default function Footer() {
               <p data-testid="footer-copyright">
                 &copy; {currentYear} Movement for Change and Empowering Future Leaders (MCEFL). All rights reserved.
               </p>
-              <p className="text-xs mt-1" data-testid="footer-developer">
-                Web Developer: <span className="text-secondary">One Purpose Graphics Media Inc.</span>
+              <p className="text-xs mt-1 text-white/60" data-testid="footer-developer">
+                Web Developer: <span className="text-secondary font-semibold">One Purpose Graphics Media Inc.</span>
               </p>
             </div>
             <div className="flex gap-6">
