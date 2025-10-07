@@ -132,6 +132,92 @@ export default function About() {
           </div>
         </div>
         
+        {/* Leadership Structure */}
+        <div className="mb-20" data-testid="leadership-section">
+          <div className="text-center mb-12">
+            <h3 className="font-heading font-bold text-2xl sm:text-3xl text-foreground mb-4">Our Leadership</h3>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              Meet the dedicated team leading MCEFL's mission to empower youth and build stronger communities.
+            </p>
+          </div>
+          
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                name: "Samuel K. Johnson",
+                position: "Executive Director",
+                image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                bio: "With over 15 years of experience in youth development, Samuel leads MCEFL's strategic vision and program implementation across Liberia.",
+                email: "sjohnson@mcefl.org"
+              },
+              {
+                name: "Mary T. Williams",
+                position: "Program Director",
+                image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                bio: "Mary oversees all programs including the Empower Her initiative, ensuring quality delivery and measurable impact in communities.",
+                email: "mwilliams@mcefl.org"
+              },
+              {
+                name: "James B. Cooper",
+                position: "Finance Director",
+                image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                bio: "James manages financial operations and ensures transparent resource allocation to maximize impact for the communities we serve.",
+                email: "jcooper@mcefl.org"
+              },
+              {
+                name: "Grace M. Harris",
+                position: "Community Outreach Coordinator",
+                image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                bio: "Grace builds and maintains relationships with local communities, ensuring our programs are responsive to their needs and aspirations.",
+                email: "gharris@mcefl.org"
+              },
+              {
+                name: "Emmanuel D. Roberts",
+                position: "Youth Engagement Manager",
+                image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                bio: "Emmanuel coordinates youth programs and mentorship initiatives, creating opportunities for young leaders to develop their skills.",
+                email: "eroberts@mcefl.org"
+              },
+              {
+                name: "Linda S. Thompson",
+                position: "Education & Training Specialist",
+                image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                bio: "Linda designs and implements educational programs, workshops, and training sessions that equip youth with essential life and leadership skills.",
+                email: "lthompson@mcefl.org"
+              }
+            ].map((leader, index) => (
+              <Card key={index} className="shadow-lg border border-border card-hover overflow-hidden" data-testid={`leader-card-${index}`}>
+                <div className="aspect-square overflow-hidden">
+                  <img 
+                    src={leader.image} 
+                    alt={leader.name}
+                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                    data-testid={`leader-image-${index}`}
+                  />
+                </div>
+                <CardContent className="p-6">
+                  <h4 className="font-heading font-bold text-xl text-foreground mb-1" data-testid={`leader-name-${index}`}>
+                    {leader.name}
+                  </h4>
+                  <p className="text-primary font-semibold mb-3" data-testid={`leader-position-${index}`}>
+                    {leader.position}
+                  </p>
+                  <p className="text-muted-foreground text-sm mb-4 leading-relaxed" data-testid={`leader-bio-${index}`}>
+                    {leader.bio}
+                  </p>
+                  <a 
+                    href={`mailto:${leader.email}`} 
+                    className="text-secondary hover:text-secondary/80 text-sm font-medium transition-colors"
+                    data-testid={`leader-email-${index}`}
+                  >
+                    {leader.email}
+                  </a>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+
         {/* Impact Statistics */}
         <div className="bg-gradient-to-br from-primary to-secondary rounded-2xl p-8 md:p-12 text-white" data-testid="impact-stats">
           <h3 className="font-heading font-bold text-2xl sm:text-3xl text-center mb-12">Our Impact</h3>

@@ -4,6 +4,27 @@
 
 This is a professional website for the Movement for Change and Empowering Future Leaders (MCEFL), a Liberian NGO focused on youth empowerment, leadership development, and community support. The platform provides information about programs, enables volunteer applications, facilitates donations through Stripe, and showcases testimonials. The application is built as a modern full-stack web application with a React frontend and Express backend.
 
+## Recent Changes (January 2025)
+
+**Theme & Color Scheme:**
+- Restored primary color to orange (hsl(25, 95%, 53%)) from white
+- Maintained secondary color as blue (hsl(221, 68%, 40%))
+- Implemented dark/light theme toggle with localStorage persistence
+- Added theme toggle buttons in navigation (desktop and mobile) with accessibility labels
+- Complete dark mode color palette for all components
+
+**Leadership Section:**
+- Added "Our Leadership" section to About page
+- Displays 6 leadership team members with individual details:
+  - Executive Director: Samuel K. Johnson
+  - Program Director: Mary T. Williams
+  - Finance Director: James B. Cooper
+  - Community Outreach Coordinator: Grace M. Harris
+  - Youth Engagement Manager: Emmanuel D. Roberts
+  - Education & Training Specialist: Linda S. Thompson
+- Each leader card includes profile image, name, position, bio, and email contact
+- Responsive 3-column grid layout with hover animations
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
@@ -25,8 +46,9 @@ Preferred communication style: Simple, everyday language.
 - Single Page Application (SPA) architecture with client-side routing
 - Component-based architecture with reusable UI components in `/client/src/components/ui`
 - Custom design system with CSS variables for theming (primary, secondary, accent colors)
+- **Dark/Light Theme Support:** Global ThemeProvider with localStorage persistence, theme toggle in navigation
 - Mobile-first responsive design approach
-- Organized page structure: Home, About, Programs, Get Involved, Testimonials, News & Events, Contact, Donate
+- Organized page structure: Home, About, Programs, Get Involved, Testimonials, News & Events, Contact, Donate, Program Details, Partnerships, Share Donation, Gallery, News Archive
 
 ### Backend Architecture
 
