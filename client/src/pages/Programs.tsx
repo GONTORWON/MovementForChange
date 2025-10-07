@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
 
 export default function Programs() {
   const programs = [
@@ -8,42 +9,48 @@ export default function Programs() {
       description: "Training future leaders in public speaking, critical thinking, and ethical decision-making through interactive workshops and hands-on experiences.",
       icon: "fas fa-users-cog",
       gradient: "from-primary to-orange-600",
-      category: "Leadership"
+      category: "Leadership",
+      slug: "leadership-development"
     },
     {
       title: "Community Engagement Initiatives",
       description: "Grassroots outreach projects tackling local challenges—from food security to gender equality—creating sustainable community solutions.",
       icon: "fas fa-hands-helping",
       gradient: "from-accent to-green-700",
-      category: "Community"
+      category: "Community",
+      slug: "community-engagement"
     },
     {
       title: "Youth Mentorship Program",
       description: "Connecting young people with experienced mentors to guide personal, academic, and professional growth through one-on-one relationships.",
       icon: "fas fa-user-graduate",
       gradient: "from-secondary to-blue-800",
-      category: "Mentorship"
+      category: "Mentorship",
+      slug: "youth-mentorship"
     },
     {
       title: "Educational Support for Orphans",
       description: "Providing school materials, uniforms, stationery, and basic supplies to children in need—ensuring no child is left behind due to poverty.",
       icon: "fas fa-book-reader",
       gradient: "from-yellow-500 to-orange-500",
-      category: "Education"
+      category: "Education",
+      slug: "educational-support"
     },
     {
       title: "Empower Her",
       description: "A flagship program focused on uplifting young girls through leadership training, education access, and comprehensive empowerment initiatives.",
       icon: "fas fa-female",
       gradient: "from-pink-500 to-purple-600",
-      category: "Empowerment"
+      category: "Empowerment",
+      slug: "empower-her"
     },
     {
       title: "Policy & Advocacy Training",
       description: "Empowering young people to understand their rights and actively shape the policies that impact their lives and communities.",
       icon: "fas fa-balance-scale",
       gradient: "from-indigo-500 to-purple-700",
-      category: "Advocacy"
+      category: "Advocacy",
+      slug: "policy-advocacy"
     }
   ];
 
@@ -81,9 +88,11 @@ export default function Programs() {
                 <p className="text-muted-foreground mb-4" data-testid={`program-description-${index}`}>
                   {program.description}
                 </p>
-                <Button variant="ghost" className="text-primary font-semibold hover:underline p-0" data-testid={`program-learn-more-${index}`}>
-                  Learn More <i className="fas fa-arrow-right ml-1"></i>
-                </Button>
+                <Link href={`/programs/${program.slug}`}>
+                  <Button variant="ghost" className="text-secondary font-semibold hover:underline p-0" data-testid={`program-learn-more-${index}`}>
+                    Learn More <i className="fas fa-arrow-right ml-1"></i>
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           ))}

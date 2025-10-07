@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { Card, CardContent } from "@/components/ui/card";
@@ -542,9 +542,11 @@ export default function Donate() {
                 <p className="text-muted-foreground text-sm mb-4">
                   Corporate partnerships amplify our reach and impact.
                 </p>
-                <Button variant="outline" size="sm" data-testid="partner-link-button">
-                  Get Started
-                </Button>
+                <Link href="/partnerships">
+                  <Button variant="outline" size="sm" data-testid="partner-link-button">
+                    Get Started
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
@@ -555,9 +557,11 @@ export default function Donate() {
                 <p className="text-muted-foreground text-sm mb-4">
                   Spread the word about our mission on social media.
                 </p>
-                <Button variant="outline" size="sm" data-testid="share-link-button">
-                  Share Now
-                </Button>
+                <Link href="/share-donation">
+                  <Button variant="outline" size="sm" data-testid="share-link-button">
+                    Share Now
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           </div>

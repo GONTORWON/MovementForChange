@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
 
 export default function NewsEvents() {
   const newsArticles = [
@@ -162,9 +163,11 @@ export default function NewsEvents() {
           </div>
           
           <div className="text-center mt-8">
-            <Button className="bg-primary text-primary-foreground btn-primary" data-testid="view-all-news-button">
-              View All News
-            </Button>
+            <Link href="/news-archive">
+              <Button className="bg-secondary text-secondary-foreground btn-primary" data-testid="view-all-news-button">
+                View All News
+              </Button>
+            </Link>
           </div>
         </div>
         
@@ -231,9 +234,11 @@ export default function NewsEvents() {
           </div>
           
           <div className="text-center">
-            <Button className="bg-primary text-primary-foreground btn-primary" data-testid="view-full-gallery-button">
-              View Full Gallery
-            </Button>
+            <Link href="/gallery">
+              <Button className="bg-secondary text-secondary-foreground btn-primary" data-testid="view-full-gallery-button">
+                View Full Gallery
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
