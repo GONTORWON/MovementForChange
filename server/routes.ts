@@ -1,0 +1,164 @@
+import type { Express } from "express";
+import { createServer, type Server } from "http";
+import Stripe from "stripe";
+import { storage } from "./storage";
+import { insertContactSubmissionSchema, insertVolunteerApplicationSchema, insertDonationSchema } from "@shared/schema";
+
+if (!process.env.STRIPE_SECRET_KEY) {
+  console.warn('STRIPE_SECRET_KEY not found in environment variables. Donation functionality will be limited.');
+}
+
+const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2023-10-16",
+}) : null;
+
+export async function registerRoutes(app: Express): Promise<Server> {
+  
+  // Contact form submission
+  app.post("/api/contact", async (req, res) => {
+    try {
+      const submission = insertContactSubmissionSchema.parse(req.body);
+      const result = await storage.createContactSubmission(submission);
+      res.json({ success: true, id: result.id });
+    } catch (error: any) {
+      res.status(400).json({ message: "Invalid submission: " + error.message });
+    }
+  });
+
+  // Get contact submissions (admin only in real app)
+  app.get("/api/contact", async (req, res) => {
+    try {
+      const submissions = await storage.getContactSubmissions();
+      res.json(submissions);
+    } catch (error: any) {
+      res.status(500).json({ message: "Error fetching submissions: " + error.message });
+    }
+  });
+
+  // Volunteer application submission
+  app.post("/api/volunteer", async (req, res) => {
+    try {
+      const application = insertVolunteerApplicationSchema.parse(req.body);
+      const result = await storage.createVolunteerApplication(application);
+      res.json({ success: true, id: result.id });
+    } catch (error: any) {
+      res.status(400).json({ message: "Invalid application: " + error.message });
+    }
+  });
+
+  // Get volunteer applications (admin only in real app)
+  app.get("/api/volunteer", async (req, res) => {
+    try {
+      const applications = await storage.getVolunteerApplications();
+      res.json(applications);
+    } catch (error: any) {
+      res.status(500).json({ message: "Error fetching applications: " + error.message });
+    }
+  });
+
+  // Stripe payment intent creation for donations
+  app.post("/api/create-payment-intent", async (req, res) => {
+    if (!stripe) {
+      return res.status(500).json({ message: "Stripe not configured. Please contact administrator." });
+    }
+
+    try {
+      const { amount, donorName, donorEmail, type = "general" } = req.body;
+      
+      if (!amount || amount < 50) { // Minimum $0.50
+        return res.status(400).json({ message: "Invalid amount. Minimum donation is $0.50" });
+      }
+
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: Math.round(amount * 100), // Convert to cents
+        currency: "usd",
+        automatic_payment_methods: {
+          enabled: true,
+        },
+        metadata: {
+          donorName: donorName || 'Anonymous',
+          donorEmail: donorEmail || '',
+          type: type
+        }
+      });
+
+      // Save donation record
+      const donation = await storage.createDonation({
+        amount: Math.round(amount * 100),
+        currency: "usd",
+        donorName: donorName || null,
+        donorEmail: donorEmail || null,
+        stripePaymentIntentId: paymentIntent.id,
+        status: "pending",
+        type: type
+      });
+
+      res.json({ 
+        clientSecret: paymentIntent.client_secret,
+        donationId: donation.id
+      });
+    } catch (error: any) {
+      res.status(500).json({ message: "Error creating payment intent: " + error.message });
+    }
+  });
+
+  // Webhook to handle Stripe payment updates
+  app.post("/api/webhooks/stripe", async (req, res) => {
+    if (!stripe) {
+      return res.status(500).json({ message: "Stripe not configured" });
+    }
+
+    try {
+      const sig = req.headers['stripe-signature'] as string;
+      const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+      if (!endpointSecret) {
+        console.log('Stripe webhook received but no endpoint secret configured');
+        return res.status(200).send('OK');
+      }
+
+      const event = stripe.webhooks.constructEvent(req.rawBody, sig, endpointSecret);
+
+      if (event.type === 'payment_intent.succeeded') {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        
+        // Find and update donation status
+        const donations = await storage.getDonations();
+        const donation = donations.find(d => d.stripePaymentIntentId === paymentIntent.id);
+        
+        if (donation) {
+          await storage.updateDonationStatus(donation.id, 'succeeded');
+        }
+      }
+
+      res.status(200).send('OK');
+    } catch (error: any) {
+      console.error('Stripe webhook error:', error.message);
+      res.status(400).send(`Webhook Error: ${error.message}`);
+    }
+  });
+
+  // Get donations (admin only in real app)
+  app.get("/api/donations", async (req, res) => {
+    try {
+      const donations = await storage.getDonations();
+      res.json(donations);
+    } catch (error: any) {
+      res.status(500).json({ message: "Error fetching donations: " + error.message });
+    }
+  });
+
+  // Get approved testimonials
+  app.get("/api/testimonials", async (req, res) => {
+    try {
+      const testimonials = await storage.getApprovedTestimonials();
+      res.json(testimonials);
+    } catch (error: any) {
+      res.status(500).json({ message: "Error fetching testimonials: " + error.message });
+    }
+  });
+
+  const httpServer = createServer(app);
+
+  return httpServer;
+}
