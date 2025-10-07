@@ -18,6 +18,9 @@ import Partnerships from "@/pages/Partnerships";
 import ShareDonation from "@/pages/ShareDonation";
 import Gallery from "@/pages/Gallery";
 import NewsArchive from "@/pages/NewsArchive";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import TermsOfService from "@/pages/TermsOfService";
+import CookiePolicy from "@/pages/CookiePolicy";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -37,6 +40,9 @@ function Router() {
         <Route path="/partnerships" component={Partnerships} />
         <Route path="/share-donation" component={ShareDonation} />
         <Route path="/gallery" component={Gallery} />
+        <Route path="/privacy-policy" component={PrivacyPolicy} />
+        <Route path="/terms-of-service" component={TermsOfService} />
+        <Route path="/cookie-policy" component={CookiePolicy} />
         <Route component={NotFound} />
       </Switch>
     </Layout>
