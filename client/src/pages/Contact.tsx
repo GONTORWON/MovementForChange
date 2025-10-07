@@ -254,7 +254,7 @@ export default function Contact() {
                       <Checkbox
                         id="privacy"
                         checked={agreedToPrivacy}
-                        onCheckedChange={setAgreedToPrivacy}
+                        onCheckedChange={(checked) => setAgreedToPrivacy(checked === true)}
                         data-testid="contact-privacy-checkbox"
                       />
                       <label htmlFor="privacy" className="text-sm text-muted-foreground leading-relaxed">

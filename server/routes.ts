@@ -9,7 +9,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
 }
 
 const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2023-10-16",
+  apiVersion: "2025-09-30.clover",
 }) : null;
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -117,7 +117,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(200).send('OK');
       }
 
-      const event = stripe.webhooks.constructEvent(req.rawBody, sig, endpointSecret);
+      const event = stripe.webhooks.constructEvent(req.rawBody as string | Buffer, sig, endpointSecret);
 
       if (event.type === 'payment_intent.succeeded') {
         const paymentIntent = event.data.object as Stripe.PaymentIntent;

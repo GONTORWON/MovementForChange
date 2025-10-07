@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 export default function Testimonials() {
-  const { data: testimonials, isLoading, error } = useQuery({
+  const { data: testimonials, isLoading, error } = useQuery<any[]>({
     queryKey: ["/api/testimonials"],
   });
 

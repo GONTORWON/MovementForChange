@@ -166,7 +166,7 @@ export default function GetInvolved() {
                       <FormItem>
                         <FormLabel>Skills & Expertise</FormLabel>
                         <FormControl>
-                          <Input placeholder="e.g., Teaching, Event Planning, Medical" {...field} data-testid="volunteer-skills-input" />
+                          <Input placeholder="e.g., Teaching, Event Planning, Medical" {...field} value={field.value || ""} data-testid="volunteer-skills-input" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -179,7 +179,7 @@ export default function GetInvolved() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Availability</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
+                        <Select onValueChange={field.onChange} value={field.value || undefined}>
                           <FormControl>
                             <SelectTrigger data-testid="volunteer-availability-select">
                               <SelectValue placeholder="Select your availability" />
