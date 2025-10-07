@@ -104,9 +104,17 @@ html {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+.dark .nav-shadow {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
 /* Hero gradient overlay */
 .hero-overlay {
   background: linear-gradient(135deg, hsl(221, 68%, 40%, 0.9) 0%, hsl(160, 84%, 39%, 0.85) 100%);
+}
+
+.dark .hero-overlay {
+  background: linear-gradient(135deg, hsl(221, 68%, 50%, 0.85) 0%, hsl(160, 84%, 45%, 0.8) 100%);
 }
 
 /* Card hover effect */
@@ -117,6 +125,10 @@ html {
 .card-hover:hover {
   transform: translateY(-8px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.dark .card-hover:hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
 }
 
 /* Button animations */
