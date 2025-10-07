@@ -31,6 +31,16 @@ This is a professional website for the Movement for Change and Empowering Future
 - Each leader card includes profile image, name, position, bio, and email contact
 - Responsive 3-column grid layout with hover animations
 
+**Legal Pages:**
+- Added three comprehensive legal pages accessible from footer:
+  - Privacy Policy (`/privacy-policy`) - 11 sections covering data collection, usage, sharing, security, user rights, and compliance
+  - Terms of Service (`/terms-of-service`) - 14 sections including donation policy, volunteer agreements, IP rights, disclaimers, and governing law
+  - Cookie Policy (`/cookie-policy`) - 10 sections with detailed cookie information, types table, and browser management instructions
+- All pages feature consistent card-based layout with proper SEO metadata
+- Full dark/light theme support with accessible contrast
+- Footer links updated to route to actual legal pages using wouter Link components
+- All interactive elements have data-testid attributes for testing
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
