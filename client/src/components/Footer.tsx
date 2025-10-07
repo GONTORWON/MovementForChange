@@ -101,9 +101,9 @@ export default function Footer() {
               </p>
             </div>
             <div className="flex gap-6">
-              <a href="#" className="hover:text-primary transition-colors" data-testid="footer-legal-privacy">Privacy Policy</a>
-              <a href="#" className="hover:text-primary transition-colors" data-testid="footer-legal-terms">Terms of Service</a>
-              <a href="#" className="hover:text-primary transition-colors" data-testid="footer-legal-cookies">Cookie Policy</a>
+              <Link href="/privacy-policy" className="hover:text-primary transition-colors" data-testid="footer-legal-privacy">Privacy Policy</Link>
+              <Link href="/terms-of-service" className="hover:text-primary transition-colors" data-testid="footer-legal-terms">Terms of Service</Link>
+              <Link href="/cookie-policy" className="hover:text-primary transition-colors" data-testid="footer-legal-cookies">Cookie Policy</Link>
             </div>
           </div>
         </div>
