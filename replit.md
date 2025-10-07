@@ -11,7 +11,13 @@ This is a professional website for the Movement for Change and Empowering Future
 - Maintained secondary color as blue (hsl(221, 68%, 40%))
 - Implemented dark/light theme toggle with localStorage persistence
 - Added theme toggle buttons in navigation (desktop and mobile) with accessibility labels
-- Complete dark mode color palette for all components
+- Complete dark mode color palette professionally balanced with proper contrast:
+  - Dark background: hsl(215, 25%, 10%)
+  - Dark cards: hsl(215, 25%, 12%)
+  - Light text: hsl(0, 0%, 98%)
+  - Enhanced shadows and gradients for dark mode
+- Footer fully optimized for both themes with proper text contrast
+- All buttons, links, and interactive elements maintain accessibility in both modes
 
 **Leadership Section:**
 - Added "Our Leadership" section to About page
