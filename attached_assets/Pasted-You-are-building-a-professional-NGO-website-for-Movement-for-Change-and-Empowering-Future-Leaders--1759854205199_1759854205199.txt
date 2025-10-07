@@ -1,0 +1,91 @@
+You are building a professional NGO website for **Movement for Change and Empowering Future Leaders (MCEFL)** based on the provided brochure content. 
+The site must be clean, modern, mobile-friendly, responsive, secure (HTTPS), and optimized for SEO. 
+Ensure it is easy to navigate, loads fast, and is simple for future updates. Use clear sections and a professional NGO-style layout.
+
+---
+
+## 1. Sitemap & Navigation
+Create the following top navigation bar:
+Home | About Us | Programs | Get Involved | Testimonials | News & Events | Contact Us
+
+Add a footer on all pages with:
+- Quick links (Home, About Us, Programs, Get Involved, Testimonials, News & Events, Contact Us)
+- Social media icons (Facebook, Instagram, Twitter, LinkedIn)
+- Copyright notice
+
+---
+
+## 2. Homepage
+- Hero section with logo, tagline: "Inspiring Action. Empowering Generation."
+- Call-to-action buttons: **Donate • Volunteer • Sponsor**
+- Short introduction from brochure ("Who We Are")
+- Highlight sections: Programs, Get Involved, Testimonials
+- Rotating banner/hero image with youth, leadership, and community themes
+
+---
+
+## 3. About Us Page
+- Section: Who We Are (from brochure)
+- Section: Mission & Vision
+- Optional: Leadership/Team introduction
+- Optional: Impact statistics (placeholder for now, e.g. "500+ youth mentored")
+
+---
+
+## 4. Programs Page
+Create a “Programs” page listing these six programs in a grid or card format with icons/images:
+1. Leadership Development Workshops
+2. Community Engagement Initiatives
+3. Youth Mentorship Program
+4. Educational Support for Orphans & Underprivileged Children
+5. Empower Her
+6. Policy & Advocacy Training
+
+Each program should have a short description and a “Read More” placeholder for future expansion.
+
+---
+
+## 5. Get Involved Page
+Include the following sections:
+- Volunteer with Us (include an online volunteer form: Name, Email, Phone, Skills, Availability)
+- Sponsor a Child’s Education (donation tiers or input box for amount)
+- Donate Today (set up with PayPal, Stripe, or Mobile Money integration — placeholders are fine)
+- Partner with Us (info for sponsors & collaborators)
+- Attend Our Events (list or calendar style with placeholder events)
+
+---
+
+## 6. Testimonials Page
+Use a carousel or card format for quotes. Include:
+- “Thanks to MCEFL, my daughter now has school supplies and the confidence to lead her classmates.” — Austin D., Parent
+- “Being an orphan was hard, but MCEFL gave me hope, books, and someone to believe in me.” — Mary, Age 12
+Leave space to add more testimonials later.
+
+---
+
+## 7. News & Events Page
+Create a section for:
+- Blog-style updates (advocacy news, program reports, event recaps)
+- Upcoming events (list or calendar style, with placeholders)
+- Media gallery (photos and videos)
+
+---
+
+## 8. Contact Us Page
+Include:
+- Address: Carey Street, Behind The Old CSA Building, Monrovia, Liberia, Postal Code: 1000
+- Phone: (+231) 775333753 / 555147861
+- Email: movementforchangemcefl@gmail.com
+- Website: www.movementforchangemcefl.org
+- Social Media: Facebook | Instagram | Twitter | LinkedIn @MCEFL_Leaders
+- Contact Form (fields: Name, Email, Subject, Message)
+- Embed Google Map of the office location
+
+---
+
+## 9. Technical Requirements
+- Fully mobile responsive design
+- Secure (HTTPS and form spam protection)
+- SEO-ready (meta tags, keywords, alt text for images)
+- Fast-loading images and compressed assets
+- Code structured for easy future updates
