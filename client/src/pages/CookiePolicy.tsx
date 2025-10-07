@@ -81,29 +81,29 @@ export default function CookiePolicy() {
             <section className="bg-card p-6 rounded-lg shadow-sm" data-testid="section-specific">
               <h2 className="text-2xl font-heading font-bold text-foreground mb-4">4. Specific Cookies We Use</h2>
               <div className="overflow-x-auto">
-                <table className="min-w-full border-collapse">
+                <table className="min-w-full border-collapse" data-testid="table-cookie-list">
                   <thead>
                     <tr className="border-b border-border">
-                      <th className="text-left p-3 font-semibold text-foreground">Cookie Name</th>
-                      <th className="text-left p-3 font-semibold text-foreground">Purpose</th>
-                      <th className="text-left p-3 font-semibold text-foreground">Duration</th>
+                      <th className="text-left p-3 font-semibold text-foreground" data-testid="header-cookie-name">Cookie Name</th>
+                      <th className="text-left p-3 font-semibold text-foreground" data-testid="header-cookie-purpose">Purpose</th>
+                      <th className="text-left p-3 font-semibold text-foreground" data-testid="header-cookie-duration">Duration</th>
                     </tr>
                   </thead>
                   <tbody className="text-muted-foreground">
-                    <tr className="border-b border-border">
-                      <td className="p-3">theme</td>
-                      <td className="p-3">Stores your theme preference (light/dark mode)</td>
-                      <td className="p-3">Persistent (1 year)</td>
+                    <tr className="border-b border-border" data-testid="row-cookie-theme">
+                      <td className="p-3" data-testid="text-cookie-name-theme">theme</td>
+                      <td className="p-3" data-testid="text-purpose-theme">Stores your theme preference (light/dark mode)</td>
+                      <td className="p-3" data-testid="text-duration-theme">Persistent (1 year)</td>
                     </tr>
-                    <tr className="border-b border-border">
-                      <td className="p-3">session_id</td>
-                      <td className="p-3">Maintains your session state</td>
-                      <td className="p-3">Session</td>
+                    <tr className="border-b border-border" data-testid="row-cookie-session">
+                      <td className="p-3" data-testid="text-cookie-name-session">session_id</td>
+                      <td className="p-3" data-testid="text-purpose-session">Maintains your session state</td>
+                      <td className="p-3" data-testid="text-duration-session">Session</td>
                     </tr>
-                    <tr className="border-b border-border">
-                      <td className="p-3">analytics_*</td>
-                      <td className="p-3">Website usage analytics</td>
-                      <td className="p-3">Persistent (2 years)</td>
+                    <tr className="border-b border-border" data-testid="row-cookie-analytics">
+                      <td className="p-3" data-testid="text-cookie-name-analytics">analytics_*</td>
+                      <td className="p-3" data-testid="text-purpose-analytics">Website usage analytics</td>
+                      <td className="p-3" data-testid="text-duration-analytics">Persistent (2 years)</td>
                     </tr>
                   </tbody>
                 </table>
