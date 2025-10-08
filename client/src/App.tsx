@@ -4,6 +4,8 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { AuthProvider } from "@/lib/AuthContext";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Layout from "@/components/Layout";
 import Home from "@/pages/Home";
 import About from "@/pages/About";
@@ -21,31 +23,78 @@ import NewsArchive from "@/pages/NewsArchive";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import TermsOfService from "@/pages/TermsOfService";
 import CookiePolicy from "@/pages/CookiePolicy";
+import Login from "@/pages/Login";
+import AdminDashboard from "@/pages/AdminDashboard";
+import AdminContacts from "@/pages/AdminContacts";
+import AdminVolunteers from "@/pages/AdminVolunteers";
+import AdminTestimonials from "@/pages/AdminTestimonials";
+import AdminNews from "@/pages/AdminNews";
+import AdminEvents from "@/pages/AdminEvents";
 import NotFound from "@/pages/not-found";
 
 function Router() {
   return (
-    <Layout>
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/about" component={About} />
-        <Route path="/programs" component={Programs} />
-        <Route path="/programs/:slug" component={ProgramDetail} />
-        <Route path="/get-involved" component={GetInvolved} />
-        <Route path="/testimonials" component={Testimonials} />
-        <Route path="/news-events" component={NewsEvents} />
-        <Route path="/news-archive" component={NewsArchive} />
-        <Route path="/contact" component={Contact} />
-        <Route path="/donate" component={Donate} />
-        <Route path="/partnerships" component={Partnerships} />
-        <Route path="/share-donation" component={ShareDonation} />
-        <Route path="/gallery" component={Gallery} />
-        <Route path="/privacy-policy" component={PrivacyPolicy} />
-        <Route path="/terms-of-service" component={TermsOfService} />
-        <Route path="/cookie-policy" component={CookiePolicy} />
-        <Route component={NotFound} />
-      </Switch>
-    </Layout>
+    <Switch>
+      {/* Public Routes */}
+      <Route path="/login" component={Login} />
+      
+      {/* Admin Routes */}
+      <Route path="/admin">
+        <ProtectedRoute requiredRole="staff">
+          <AdminDashboard />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/admin/contacts">
+        <ProtectedRoute requiredRole="staff">
+          <AdminContacts />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/admin/volunteers">
+        <ProtectedRoute requiredRole="staff">
+          <AdminVolunteers />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/admin/testimonials">
+        <ProtectedRoute requiredRole="staff">
+          <AdminTestimonials />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/admin/news">
+        <ProtectedRoute requiredRole="staff">
+          <AdminNews />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/admin/events">
+        <ProtectedRoute requiredRole="staff">
+          <AdminEvents />
+        </ProtectedRoute>
+      </Route>
+
+      {/* Public Pages with Layout */}
+      <Route>
+        <Layout>
+          <Switch>
+            <Route path="/" component={Home} />
+            <Route path="/about" component={About} />
+            <Route path="/programs" component={Programs} />
+            <Route path="/programs/:slug" component={ProgramDetail} />
+            <Route path="/get-involved" component={GetInvolved} />
+            <Route path="/testimonials" component={Testimonials} />
+            <Route path="/news-events" component={NewsEvents} />
+            <Route path="/news-archive" component={NewsArchive} />
+            <Route path="/contact" component={Contact} />
+            <Route path="/donate" component={Donate} />
+            <Route path="/partnerships" component={Partnerships} />
+            <Route path="/share-donation" component={ShareDonation} />
+            <Route path="/gallery" component={Gallery} />
+            <Route path="/privacy-policy" component={PrivacyPolicy} />
+            <Route path="/terms-of-service" component={TermsOfService} />
+            <Route path="/cookie-policy" component={CookiePolicy} />
+            <Route component={NotFound} />
+          </Switch>
+        </Layout>
+      </Route>
+    </Switch>
   );
 }
 
@@ -53,10 +102,12 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="light">
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
+        <AuthProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+          </TooltipProvider>
+        </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );
