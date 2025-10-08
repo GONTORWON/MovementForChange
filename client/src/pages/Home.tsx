@@ -29,8 +29,8 @@ export default function Home() {
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
           <div className="mb-8">
-            <div className="inline-block w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-2xl mb-6">
-              <span className="text-primary font-heading font-bold text-4xl">M</span>
+            <div className="inline-block w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-2xl mb-6 overflow-hidden">
+              <img src="/logo.jpeg" alt="MCEFL Logo" className="w-full h-full object-cover" />
             </div>
           </div>
           
