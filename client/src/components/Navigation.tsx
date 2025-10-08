@@ -42,9 +42,11 @@ export default function Navigation() {
         <div className="flex justify-between items-center h-20">
           {/* Logo and Brand */}
           <Link href="/" className="flex items-center space-x-3" data-testid="nav-logo">
-            <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-heading font-bold text-xl">M</span>
-            </div>
+            <img 
+              src="/logo.jpeg" 
+              alt="MCEFL Logo" 
+              className="w-12 h-12 rounded-lg object-cover"
+            />
             <div className="hidden sm:block">
               <div className="font-heading font-bold text-lg text-foreground">MCEFL</div>
               <div className="text-xs text-muted-foreground">Empowering Future Leaders</div>

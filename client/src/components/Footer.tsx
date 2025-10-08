@@ -36,9 +36,11 @@ export default function Footer() {
           {/* About Column */}
           <div>
             <div className="flex items-center space-x-3 mb-6">
-              <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-heading font-bold text-xl">M</span>
-              </div>
+              <img 
+                src="/logo.jpeg" 
+                alt="MCEFL Logo" 
+                className="w-12 h-12 rounded-lg object-cover"
+              />
               <div>
                 <div className="font-heading font-bold text-lg text-white dark:text-foreground">MCEFL</div>
                 <div className="text-xs text-white/70 dark:text-muted-foreground">Empowering Future Leaders</div>
@@ -147,7 +149,7 @@ export default function Footer() {
                 &copy; {currentYear} Movement for Change and Empowering Future Leaders (MCEFL). All rights reserved.
               </p>
               <p className="text-xs mt-1" data-testid="footer-developer">
-                Web Developer: <span className="text-secondary font-semibold">One Purpose Graphics Media Inc.</span>
+                Web Developer: <span className="text-white font-semibold">One Purpose Graphics Media Inc.</span>
               </p>
             </div>
             <div className="flex gap-6">
