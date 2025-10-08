@@ -21,9 +21,9 @@ export default function AdminNews() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: "",
-    slug: "",
     excerpt: "",
     content: "",
+    category: "",
     imageUrl: "",
     author: "",
     isPublished: true,
@@ -60,9 +60,9 @@ export default function AdminNews() {
   const resetForm = () => {
     setFormData({
       title: "",
-      slug: "",
       excerpt: "",
       content: "",
+      category: "",
       imageUrl: "",
       author: "",
       isPublished: true,
@@ -73,9 +73,9 @@ export default function AdminNews() {
   const handleEdit = (article: any) => {
     setFormData({
       title: article.title,
-      slug: article.slug,
       excerpt: article.excerpt || "",
       content: article.content,
+      category: article.category || "",
       imageUrl: article.imageUrl || "",
       author: article.author || "",
       isPublished: article.isPublished,
@@ -86,8 +86,7 @@ export default function AdminNews() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const slug = formData.slug || formData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    createMutation.mutate({ ...formData, slug });
+    createMutation.mutate(formData);
   };
 
   return (
@@ -116,12 +115,14 @@ export default function AdminNews() {
                 />
               </div>
               <div>
-                <Label htmlFor="slug">Slug (auto-generated if empty)</Label>
+                <Label htmlFor="category">Category *</Label>
                 <Input
-                  id="slug"
-                  value={formData.slug}
-                  onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                  data-testid="input-slug"
+                  id="category"
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  required
+                  placeholder="e.g., Programs, Impact Stories, Announcements"
+                  data-testid="input-category"
                 />
               </div>
               <div>
