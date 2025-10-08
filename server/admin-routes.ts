@@ -47,6 +47,15 @@ export function setupAdminRoutes(app: Express) {
   });
 
   // ===== CONTACT SUBMISSIONS =====
+  app.get("/api/admin/contacts", requireAdminOrStaff, async (req, res) => {
+    try {
+      const contacts = await storage.getContactSubmissions();
+      res.json(contacts);
+    } catch (error: any) {
+      res.status(500).json({ message: "Error fetching contacts: " + error.message });
+    }
+  });
+
   app.delete("/api/admin/contacts/:id", requireAdminOrStaff, async (req, res) => {
     try {
       const success = await storage.deleteContactSubmission(req.params.id);
@@ -60,6 +69,15 @@ export function setupAdminRoutes(app: Express) {
   });
 
   // ===== VOLUNTEER APPLICATIONS =====
+  app.get("/api/admin/volunteers", requireAdminOrStaff, async (req, res) => {
+    try {
+      const volunteers = await storage.getVolunteerApplications();
+      res.json(volunteers);
+    } catch (error: any) {
+      res.status(500).json({ message: "Error fetching volunteers: " + error.message });
+    }
+  });
+
   app.delete("/api/admin/volunteers/:id", requireAdminOrStaff, async (req, res) => {
     try {
       const success = await storage.deleteVolunteerApplication(req.params.id);
@@ -192,6 +210,16 @@ export function setupAdminRoutes(app: Express) {
       res.json({ success: true });
     } catch (error: any) {
       res.status(500).json({ message: "Error deleting event: " + error.message });
+    }
+  });
+
+  // ===== DONATIONS =====
+  app.get("/api/admin/donations", requireAdminOrStaff, async (req, res) => {
+    try {
+      const donations = await storage.getDonations();
+      res.json(donations);
+    } catch (error: any) {
+      res.status(500).json({ message: "Error fetching donations: " + error.message });
     }
   });
 

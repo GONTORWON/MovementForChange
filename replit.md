@@ -4,7 +4,65 @@
 
 This is a professional website for the Movement for Change and Empowering Future Leaders (MCEFL), a Liberian NGO focused on youth empowerment, leadership development, and community support. The platform provides information about programs, enables volunteer applications, facilitates donations through Stripe, and showcases testimonials. The application is built as a modern full-stack web application with a React frontend and Express backend.
 
-## Recent Changes (January 2025)
+## Recent Changes (October 2025)
+
+**Admin Portal & Content Management System (NEW):**
+- Implemented comprehensive admin portal with role-based access control (admin, staff, volunteer, donor)
+- Session-based authentication using express-session with bcrypt password hashing
+- Admin dashboard at `/admin` with real-time statistics and analytics
+- Modular admin pages for managing:
+  - Contact submissions (view, delete)
+  - Volunteer applications (view, delete)
+  - Testimonials (approve/unapprove, delete)
+  - News articles (create, edit, publish, delete with WYSIWYG editing)
+  - Events (create, edit, publish, delete with date/location management)
+  - Newsletter subscribers (view all subscriptions)
+  - Impact metrics (create, update metrics)
+  - User management (admin-only access)
+- Created reusable AdminLayout component with sidebar navigation
+- Login page at `/login` with secure authentication
+- Default admin user: username=admin, password=admin123
+
+**Dynamic Content Management:**
+- Extended database schema with 7 new tables:
+  - `newsletter_subscribers` - Email subscriptions with timestamps
+  - `news_articles` - Dynamic news with slug, content, publish status, featured images
+  - `events` - Event management with date/time, location, registration URLs
+  - `documents` - Downloadable resources with categories and access control
+  - `program_registrations` - Event/program registration tracking
+  - `settings` - Site-wide configuration management
+  - `recurring_donations` - Recurring payment tracking
+- All tables support publish/draft workflow for controlled content release
+
+**Public-Facing Features:**
+- Newsletter subscription form integrated in footer with real-time feedback
+- Testimonial submission form on `/testimonials` page with approval workflow
+- Public API endpoints for:
+  - Newsletter subscription (POST `/api/newsletter`)
+  - Testimonial submission (POST `/api/testimonials`)
+  - Published news articles (GET `/api/news`)
+  - Published events (GET `/api/events`)
+  - Published documents (GET `/api/documents`)
+  - Impact metrics (GET `/api/metrics`)
+
+**Architecture & Security:**
+- Modular backend architecture:
+  - `server/auth.ts` - Authentication utilities and middleware
+  - `server/admin-routes.ts` - Protected admin endpoints
+  - `server/routes.ts` - Public and auth routes
+- Middleware protection for admin routes (requireAuth, requireAdminOrStaff, requireAdmin)
+- Frontend AuthContext for global authentication state
+- ProtectedRoute component for route-level access control
+- Session storage using PostgreSQL via connect-pg-simple
+
+**Technical Implementation:**
+- Storage layer extended with 30+ new CRUD methods in IStorage interface
+- Type-safe API with Zod validation for all data operations
+- Frontend admin components with data tables, forms, and dialogs
+- Real-time cache invalidation using TanStack Query
+- Comprehensive test coverage including e2e admin portal testing
+
+**Previous Changes (January 2025):**
 
 **Theme & Color Scheme:**
 - Restored primary color to orange (hsl(25, 95%, 53%)) from white

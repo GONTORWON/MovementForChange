@@ -100,15 +100,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get contact submissions (admin only in real app)
-  app.get("/api/contact", async (req, res) => {
-    try {
-      const submissions = await storage.getContactSubmissions();
-      res.json(submissions);
-    } catch (error: any) {
-      res.status(500).json({ message: "Error fetching submissions: " + error.message });
-    }
-  });
+  // Get contact submissions - REMOVED (use /api/admin/contacts with auth)
 
   // Volunteer application submission
   app.post("/api/volunteer", async (req, res) => {
@@ -121,15 +113,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get volunteer applications (admin only in real app)
-  app.get("/api/volunteer", async (req, res) => {
-    try {
-      const applications = await storage.getVolunteerApplications();
-      res.json(applications);
-    } catch (error: any) {
-      res.status(500).json({ message: "Error fetching applications: " + error.message });
-    }
-  });
+  // Get volunteer applications - REMOVED (use /api/admin/volunteers with auth)
 
   // Stripe payment intent creation for donations
   app.post("/api/create-payment-intent", async (req, res) => {
@@ -213,15 +197,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get donations (admin only in real app)
-  app.get("/api/donations", async (req, res) => {
-    try {
-      const donations = await storage.getDonations();
-      res.json(donations);
-    } catch (error: any) {
-      res.status(500).json({ message: "Error fetching donations: " + error.message });
-    }
-  });
+  // Get donations - REMOVED (use /api/admin/donations with auth)
 
   // Get approved testimonials
   app.get("/api/testimonials", async (req, res) => {

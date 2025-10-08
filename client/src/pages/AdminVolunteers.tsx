@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 export default function AdminVolunteers() {
   const { toast } = useToast();
   const { data: volunteers, isLoading } = useQuery({
-    queryKey: ["/api/volunteer"],
+    queryKey: ["/api/admin/volunteers"],
   });
 
   const deleteMutation = useMutation({
@@ -18,7 +18,7 @@ export default function AdminVolunteers() {
       await apiRequest('DELETE', `/api/admin/volunteers/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/volunteer"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/volunteers"] });
       toast({ title: "Application deleted" });
     },
     onError: () => {

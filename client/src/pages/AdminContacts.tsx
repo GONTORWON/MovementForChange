@@ -10,7 +10,7 @@ import { formatDistanceToNow } from "date-fns";
 export default function AdminContacts() {
   const { toast } = useToast();
   const { data: contacts, isLoading } = useQuery({
-    queryKey: ["/api/contact"],
+    queryKey: ["/api/admin/contacts"],
   });
 
   const deleteMutation = useMutation({
@@ -18,7 +18,7 @@ export default function AdminContacts() {
       await apiRequest('DELETE', `/api/admin/contacts/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/contact"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/contacts"] });
       toast({ title: "Contact message deleted" });
     },
     onError: () => {
