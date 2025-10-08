@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Trash2, Plus, Edit, Calendar, MapPin } from "lucide-react";
+import { Trash2, Plus, Edit, Calendar, MapPin, Share2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +18,9 @@ import { RichTextEditor } from "@/components/RichTextEditor";
 export default function AdminEvents() {
   const { toast } = useToast();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [sharingEventId, setSharingEventId] = useState<string | null>(null);
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: "",
@@ -57,6 +60,34 @@ export default function AdminEvents() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/events"] });
       toast({ title: "Event deleted" });
+    },
+  });
+
+  const shareMutation = useMutation({
+    mutationFn: async ({ id, platforms }: { id: string; platforms: string[] }) => {
+      return await apiRequest('POST', `/api/admin/social-media/share/event/${id}`, { platforms });
+    },
+    onSuccess: (data: any) => {
+      const results = data.results || [];
+      const successCount = results.filter((r: any) => r.success).length;
+      const failCount = results.length - successCount;
+      
+      if (successCount > 0) {
+        toast({ 
+          title: `Shared to ${successCount} platform${successCount > 1 ? 's' : ''}`,
+          description: failCount > 0 ? `${failCount} failed` : undefined
+        });
+      }
+      if (failCount > 0 && successCount === 0) {
+        toast({ 
+          title: "Sharing failed",
+          description: "Check social media settings and API credentials",
+          variant: "destructive"
+        });
+      }
+      setShareDialogOpen(false);
+      setSharingEventId(null);
+      setSelectedPlatforms([]);
     },
   });
 
@@ -271,6 +302,19 @@ export default function AdminEvents() {
                   )}
                 </div>
                 <div className="flex gap-2">
+                  {event.isPublished && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => {
+                        setSharingEventId(event.id);
+                        setShareDialogOpen(true);
+                      }}
+                      data-testid={`button-share-${event.id}`}
+                    >
+                      <Share2 className="h-4 w-4" />
+                    </Button>
+                  )}
                   <Button
                     variant="ghost"
                     size="icon"
@@ -297,6 +341,65 @@ export default function AdminEvents() {
           ))}
         </div>
       )}
+
+      <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
+        <DialogContent data-testid="dialog-share">
+          <DialogHeader>
+            <DialogTitle>Share to Social Media</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Select platforms to share this event:
+            </p>
+            <div className="space-y-2">
+              {['facebook', 'twitter', 'linkedin'].map(platform => (
+                <div key={platform} className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id={`share-${platform}`}
+                    checked={selectedPlatforms.includes(platform)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedPlatforms([...selectedPlatforms, platform]);
+                      } else {
+                        setSelectedPlatforms(selectedPlatforms.filter(p => p !== platform));
+                      }
+                    }}
+                    className="h-4 w-4"
+                    data-testid={`checkbox-${platform}`}
+                  />
+                  <Label htmlFor={`share-${platform}`} className="capitalize">
+                    {platform === 'twitter' ? 'X (Twitter)' : platform}
+                  </Label>
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  setShareDialogOpen(false);
+                  setSelectedPlatforms([]);
+                }}
+                data-testid="button-cancel-share"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  if (sharingEventId && selectedPlatforms.length > 0) {
+                    shareMutation.mutate({ id: sharingEventId, platforms: selectedPlatforms });
+                  }
+                }}
+                disabled={selectedPlatforms.length === 0 || shareMutation.isPending}
+                data-testid="button-share-now"
+              >
+                {shareMutation.isPending ? "Sharing..." : "Share"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 }
