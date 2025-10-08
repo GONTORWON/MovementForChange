@@ -1,11 +1,53 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Testimonials() {
+  const { toast } = useToast();
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    role: "",
+    content: "",
+    rating: 5,
+  });
+
   const { data: testimonials, isLoading, error } = useQuery<any[]>({
     queryKey: ["/api/testimonials"],
   });
+
+  const submitMutation = useMutation({
+    mutationFn: async (data: any) => {
+      await apiRequest('POST', '/api/testimonials', data);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Thank you!",
+        description: "Your testimonial has been submitted for review.",
+      });
+      setFormData({ name: "", role: "", content: "", rating: 5 });
+      setShowForm(false);
+      queryClient.invalidateQueries({ queryKey: ["/api/testimonials"] });
+    },
+    onError: (error: any) => {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "Failed to submit testimonial",
+      });
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    submitMutation.mutate(formData);
+  };
 
   const defaultTestimonials = [
     {
@@ -171,16 +213,100 @@ export default function Testimonials() {
           </Card>
         </div>
 
-        {/* Call to Action */}
-        <div className="text-center bg-gradient-to-br from-primary to-secondary rounded-2xl p-12 text-white" data-testid="testimonials-cta">
-          <h3 className="font-heading font-bold text-3xl mb-4">Want to Share Your Story?</h3>
-          <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
-            If MCEFL has made an impact on your life or your community, we'd love to hear from you.
-          </p>
-          <Button className="bg-white text-primary hover:shadow-xl transition-all px-8 py-4 font-semibold text-lg" data-testid="submit-testimonial-button">
-            <i className="fas fa-pen mr-2"></i> Submit Your Testimonial
-          </Button>
-        </div>
+        {/* Testimonial Submission Form */}
+        <Card className="bg-card max-w-3xl mx-auto" data-testid="testimonial-form-section">
+          <CardContent className="p-8">
+            <div className="text-center mb-8">
+              <h3 className="font-heading font-bold text-3xl mb-4 text-foreground">Share Your Story</h3>
+              <p className="text-muted-foreground text-lg">
+                If MCEFL has made an impact on your life or your community, we'd love to hear from you.
+              </p>
+            </div>
+            {!showForm ? (
+              <div className="text-center">
+                <Button
+                  onClick={() => setShowForm(true)}
+                  className="bg-primary hover:bg-primary/90 px-8 py-4 text-lg"
+                  data-testid="show-testimonial-form-button"
+                >
+                  <i className="fas fa-pen mr-2"></i> Submit Your Testimonial
+                </Button>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <Label htmlFor="name">Your Name *</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    required
+                    data-testid="input-testimonial-name"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="role">Your Role/Affiliation</Label>
+                  <Input
+                    id="role"
+                    placeholder="e.g., Parent, Student, Volunteer"
+                    value={formData.role}
+                    onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                    data-testid="input-testimonial-role"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="content">Your Testimonial *</Label>
+                  <Textarea
+                    id="content"
+                    rows={6}
+                    placeholder="Share your experience with MCEFL..."
+                    value={formData.content}
+                    onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                    required
+                    data-testid="input-testimonial-content"
+                  />
+                </div>
+                <div>
+                  <Label>Rating</Label>
+                  <div className="flex gap-2">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setFormData({ ...formData, rating: star })}
+                        className={`text-2xl ${star <= formData.rating ? 'text-yellow-400' : 'text-gray-300'}`}
+                        data-testid={`rating-star-${star}`}
+                      >
+                        <i className="fas fa-star"></i>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  * Your testimonial will be reviewed before being published on our website.
+                </p>
+                <div className="flex gap-4">
+                  <Button
+                    type="submit"
+                    disabled={submitMutation.isPending}
+                    className="flex-1"
+                    data-testid="button-submit-testimonial"
+                  >
+                    {submitMutation.isPending ? "Submitting..." : "Submit Testimonial"}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setShowForm(false)}
+                    data-testid="button-cancel-testimonial"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

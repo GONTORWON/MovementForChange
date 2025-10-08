@@ -1,7 +1,33 @@
 import { Link } from "wouter";
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Mail } from "lucide-react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const [email, setEmail] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
+
+  const subscribeMutation = useMutation({
+    mutationFn: async (email: string) => {
+      await apiRequest('POST', '/api/newsletter', { email });
+    },
+    onSuccess: () => {
+      setSubscribed(true);
+      setEmail("");
+      setTimeout(() => setSubscribed(false), 5000);
+    },
+  });
+
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email) {
+      subscribeMutation.mutate(email);
+    }
+  };
 
   return (
     <footer className="bg-foreground dark:bg-card text-white dark:text-foreground py-16">
@@ -64,28 +90,52 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact Info */}
+          {/* Newsletter & Contact */}
           <div>
-            <h4 className="font-heading font-bold text-lg mb-6 text-white dark:text-foreground">Contact Info</h4>
-            <ul className="space-y-4 text-sm">
-              <li className="flex items-start" data-testid="footer-address">
-                <i className="fas fa-map-marker-alt text-primary mt-1 mr-3"></i>
-                <span className="text-white/80 dark:text-muted-foreground">Carey Street, Behind The Old CSA Building, Monrovia, Liberia</span>
-              </li>
-              <li className="flex items-start" data-testid="footer-phone">
-                <i className="fas fa-phone text-primary mt-1 mr-3"></i>
-                <div className="text-white/80 dark:text-muted-foreground">
-                  <a href="tel:+231775333753" className="hover:text-primary transition-colors">(+231) 775333753</a><br />
-                  <a href="tel:+231555147861" className="hover:text-primary transition-colors">(+231) 555147861</a>
+            <h4 className="font-heading font-bold text-lg mb-6 text-white dark:text-foreground">Stay Connected</h4>
+            <p className="text-white/80 dark:text-muted-foreground text-sm mb-4">
+              Subscribe to our newsletter for updates on our programs and impact.
+            </p>
+            {subscribed ? (
+              <div className="bg-green-600 text-white px-4 py-2 rounded-md text-sm mb-4" data-testid="newsletter-success">
+                ✓ Successfully subscribed!
+              </div>
+            ) : (
+              <form onSubmit={handleSubscribe} className="mb-6">
+                <div className="flex gap-2">
+                  <Input
+                    type="email"
+                    placeholder="Your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="bg-white/10 dark:bg-muted border-white/20 dark:border-border text-white dark:text-foreground placeholder:text-white/50 dark:placeholder:text-muted-foreground"
+                    data-testid="footer-newsletter-email"
+                  />
+                  <Button
+                    type="submit"
+                    size="icon"
+                    disabled={subscribeMutation.isPending}
+                    className="bg-primary hover:bg-primary/90"
+                    data-testid="footer-newsletter-submit"
+                  >
+                    <Mail className="h-4 w-4" />
+                  </Button>
                 </div>
-              </li>
-              <li className="flex items-start" data-testid="footer-email">
-                <i className="fas fa-envelope text-primary mt-1 mr-3"></i>
-                <a href="mailto:movementforchangemcefl@gmail.com" className="text-white/80 dark:text-muted-foreground hover:text-primary transition-colors break-all">
+              </form>
+            )}
+            <div className="space-y-2 text-sm">
+              <div className="flex items-center gap-2 text-white/80 dark:text-muted-foreground" data-testid="footer-email-info">
+                <i className="fas fa-envelope text-primary"></i>
+                <a href="mailto:movementforchangemcefl@gmail.com" className="hover:text-primary transition-colors break-all">
                   movementforchangemcefl@gmail.com
                 </a>
-              </li>
-            </ul>
+              </div>
+              <div className="flex items-center gap-2 text-white/80 dark:text-muted-foreground" data-testid="footer-phone-info">
+                <i className="fas fa-phone text-primary"></i>
+                <span>(+231) 775333753</span>
+              </div>
+            </div>
           </div>
         </div>
 
