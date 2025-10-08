@@ -35,7 +35,7 @@ export default function AdminEvents() {
     isPublished: true,
   });
 
-  const { data: events, isLoading } = useQuery({
+  const { data: events = [], isLoading } = useQuery({
     queryKey: ["/api/admin/events"],
   });
 

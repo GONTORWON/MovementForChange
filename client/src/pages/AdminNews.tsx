@@ -32,7 +32,7 @@ export default function AdminNews() {
     isPublished: true,
   });
 
-  const { data: articles, isLoading } = useQuery({
+  const { data: articles = [], isLoading } = useQuery({
     queryKey: ["/api/admin/news"],
   });
 
