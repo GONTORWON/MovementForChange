@@ -30,6 +30,7 @@ import AdminVolunteers from "@/pages/AdminVolunteers";
 import AdminTestimonials from "@/pages/AdminTestimonials";
 import AdminNews from "@/pages/AdminNews";
 import AdminEvents from "@/pages/AdminEvents";
+import AdminMetrics from "@/pages/AdminMetrics";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -67,6 +68,11 @@ function Router() {
       <Route path="/admin/events">
         <ProtectedRoute requiredRole="staff">
           <AdminEvents />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/admin/metrics">
+        <ProtectedRoute requiredRole="staff">
+          <AdminMetrics />
         </ProtectedRoute>
       </Route>
 

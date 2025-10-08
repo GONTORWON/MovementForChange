@@ -321,6 +321,31 @@ export function setupAdminRoutes(app: Express) {
     }
   });
 
+  app.patch("/api/admin/metrics/:id", requireAdminOrStaff, async (req, res) => {
+    try {
+      const metric = insertImpactMetricSchema.partial().parse(req.body);
+      const result = await storage.updateImpactMetric(req.params.id, metric);
+      if (!result) {
+        return res.status(404).json({ message: "Metric not found" });
+      }
+      res.json(result);
+    } catch (error: any) {
+      res.status(400).json({ message: "Invalid metric data: " + error.message });
+    }
+  });
+
+  app.delete("/api/admin/metrics/:id", requireAdminOrStaff, async (req, res) => {
+    try {
+      const success = await storage.deleteImpactMetric(req.params.id);
+      if (!success) {
+        return res.status(404).json({ message: "Metric not found" });
+      }
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ message: "Error deleting metric: " + error.message });
+    }
+  });
+
   // ===== USER MANAGEMENT (Admin Only) =====
   app.get("/api/admin/users", requireAdmin, async (req, res) => {
     try {

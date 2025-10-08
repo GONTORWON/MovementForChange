@@ -76,6 +76,8 @@ export interface IStorage {
   getImpactMetrics(): Promise<ImpactMetric[]>;
   getImpactMetric(metricKey: string): Promise<ImpactMetric | undefined>;
   upsertImpactMetric(metric: InsertImpactMetric): Promise<ImpactMetric>;
+  updateImpactMetric(id: string, metric: Partial<InsertImpactMetric>): Promise<ImpactMetric | undefined>;
+  deleteImpactMetric(id: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -332,6 +334,20 @@ export class DatabaseStorage implements IStorage {
       })
       .returning();
     return result;
+  }
+
+  async updateImpactMetric(id: string, metric: Partial<InsertImpactMetric>): Promise<ImpactMetric | undefined> {
+    const [result] = await db
+      .update(impactMetrics)
+      .set({ ...metric, updatedAt: new Date() })
+      .where(eq(impactMetrics.id, id))
+      .returning();
+    return result;
+  }
+
+  async deleteImpactMetric(id: string): Promise<boolean> {
+    const result = await db.delete(impactMetrics).where(eq(impactMetrics.id, id));
+    return result.rowCount !== null && result.rowCount > 0;
   }
 }
 

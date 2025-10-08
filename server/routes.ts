@@ -199,6 +199,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Get donations - REMOVED (use /api/admin/donations with auth)
 
+  // Get public impact metrics for homepage
+  app.get("/api/metrics", async (req, res) => {
+    try {
+      const [
+        volunteers,
+        donations,
+        testimonials,
+        impactMetrics
+      ] = await Promise.all([
+        storage.getVolunteerApplications(),
+        storage.getDonations(),
+        storage.getAllTestimonials(),
+        storage.getImpactMetrics()
+      ]);
+
+      const successfulDonations = donations.filter(d => d.status === 'succeeded');
+      const childrenSupported = impactMetrics.find(m => m.metricKey === 'children_supported')?.metricValue || 0;
+      const communitiesReached = impactMetrics.find(m => m.metricKey === 'communities_reached')?.metricValue || 0;
+      const eventsHeld = impactMetrics.find(m => m.metricKey === 'events_held')?.metricValue || 0;
+
+      res.json({
+        stats: [
+          { 
+            number: `${volunteers.length}+`, 
+            label: "Youth Mentored", 
+            description: "Through our mentorship programs" 
+          },
+          { 
+            number: `${childrenSupported}+`, 
+            label: "Children Supported", 
+            description: "With educational materials" 
+          },
+          { 
+            number: `${communitiesReached}+`, 
+            label: "Communities Reached", 
+            description: "Across Liberia" 
+          },
+          { 
+            number: `${eventsHeld}+`, 
+            label: "Leadership Events", 
+            description: "Workshops and camps held" 
+          }
+        ]
+      });
+    } catch (error: any) {
+      res.status(500).json({ message: "Error fetching metrics: " + error.message });
+    }
+  });
+
   // Get approved testimonials
   app.get("/api/testimonials", async (req, res) => {
     try {

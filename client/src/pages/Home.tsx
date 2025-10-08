@@ -1,9 +1,14 @@
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function Home() {
-  const stats = [
+  const { data: metricsData } = useQuery({
+    queryKey: ["/api/metrics"],
+  });
+
+  const stats = metricsData?.stats || [
     { number: "500+", label: "Youth Mentored", description: "Through our mentorship programs" },
     { number: "1,200+", label: "Children Supported", description: "With educational materials" },
     { number: "50+", label: "Communities Reached", description: "Across Liberia" },
