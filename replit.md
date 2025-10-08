@@ -61,6 +61,13 @@ This is a professional website for the Movement for Change and Empowering Future
 - Frontend admin components with data tables, forms, and dialogs
 - Real-time cache invalidation using TanStack Query
 - Comprehensive test coverage including e2e admin portal testing
+- Impact Metrics Dashboard: Homepage now displays real-time metrics from database, admin can manage via /admin/metrics
+
+**Email Integration Note:**
+- User dismissed Resend integration setup
+- For future email notifications (donation confirmations, volunteer applications, contact auto-responder), will need to either:
+  1. Set up Resend/SendGrid integration with API keys as secrets, OR
+  2. Use alternative email service with manual API key configuration
 
 **Previous Changes (January 2025):**
 

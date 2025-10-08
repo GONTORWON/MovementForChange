@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import { RichTextEditor } from "@/components/RichTextEditor";
 
 export default function AdminEvents() {
   const { toast } = useToast();
@@ -22,8 +23,10 @@ export default function AdminEvents() {
     title: "",
     slug: "",
     description: "",
-    eventDate: "",
+    date: "",
+    time: "",
     location: "",
+    category: "",
     imageUrl: "",
     registrationUrl: "",
     isPublished: true,
@@ -62,8 +65,10 @@ export default function AdminEvents() {
       title: "",
       slug: "",
       description: "",
-      eventDate: "",
+      date: "",
+      time: "",
       location: "",
+      category: "",
       imageUrl: "",
       registrationUrl: "",
       isPublished: true,
@@ -76,8 +81,10 @@ export default function AdminEvents() {
       title: event.title,
       slug: event.slug,
       description: event.description,
-      eventDate: event.eventDate ? new Date(event.eventDate).toISOString().slice(0, 16) : "",
+      date: event.date ? new Date(event.date).toISOString().slice(0, 10) : "",
+      time: event.time || "",
       location: event.location || "",
+      category: event.category || "",
       imageUrl: event.imageUrl || "",
       registrationUrl: event.registrationUrl || "",
       isPublished: event.isPublished,
@@ -127,25 +134,43 @@ export default function AdminEvents() {
                 />
               </div>
               <div>
-                <Label htmlFor="description">Description *</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  required
-                  rows={5}
-                  data-testid="input-description"
+                <Label>Description *</Label>
+                <RichTextEditor
+                  content={formData.description}
+                  onChange={(description) => setFormData({ ...formData, description })}
+                  placeholder="Describe the event details..."
                 />
               </div>
               <div>
-                <Label htmlFor="eventDate">Event Date & Time *</Label>
+                <Label htmlFor="date">Event Date *</Label>
                 <Input
-                  id="eventDate"
-                  type="datetime-local"
-                  value={formData.eventDate}
-                  onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
+                  id="date"
+                  type="date"
+                  value={formData.date}
+                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                   required
-                  data-testid="input-eventdate"
+                  data-testid="input-date"
+                />
+              </div>
+              <div>
+                <Label htmlFor="time">Event Time</Label>
+                <Input
+                  id="time"
+                  type="time"
+                  value={formData.time}
+                  onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+                  data-testid="input-time"
+                />
+              </div>
+              <div>
+                <Label htmlFor="category">Category *</Label>
+                <Input
+                  id="category"
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  required
+                  placeholder="e.g., Workshop, Training, Community Event"
+                  data-testid="input-category"
                 />
               </div>
               <div>
@@ -232,10 +257,10 @@ export default function AdminEvents() {
                       <Badge variant="secondary">Draft</Badge>
                     )}
                   </div>
-                  {event.eventDate && (
+                  {event.date && (
                     <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
-                      {format(new Date(event.eventDate), 'PPP p')}
+                      {format(new Date(event.date), 'PPP')} {event.time && `at ${event.time}`}
                     </p>
                   )}
                   {event.location && (

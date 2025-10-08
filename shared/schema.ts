@@ -155,6 +155,8 @@ export const insertNewsArticleSchema = createInsertSchema(newsArticles).omit({
 export const insertEventSchema = createInsertSchema(events).omit({
   id: true,
   createdAt: true,
+}).extend({
+  date: z.string().or(z.date()).transform((val) => typeof val === 'string' ? new Date(val) : val),
 });
 
 export const insertNewsletterSchema = createInsertSchema(newsletters).omit({

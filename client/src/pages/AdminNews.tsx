@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import { RichTextEditor } from "@/components/RichTextEditor";
 
 export default function AdminNews() {
   const { toast } = useToast();
@@ -133,14 +134,11 @@ export default function AdminNews() {
                 />
               </div>
               <div>
-                <Label htmlFor="content">Content *</Label>
-                <Textarea
-                  id="content"
-                  value={formData.content}
-                  onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                  required
-                  rows={10}
-                  data-testid="input-content"
+                <Label>Content *</Label>
+                <RichTextEditor
+                  content={formData.content}
+                  onChange={(content) => setFormData({ ...formData, content })}
+                  placeholder="Write your article content here..."
                 />
               </div>
               <div>
