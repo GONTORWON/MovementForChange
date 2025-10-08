@@ -6,7 +6,24 @@ This is a professional website for the Movement for Change and Empowering Future
 
 ## Recent Changes (October 2025)
 
-**Admin Portal & Content Management System (NEW):**
+**Social Media Integration (NEW - October 2025):**
+- Comprehensive social media auto-posting system for News and Events
+- Admin settings page at `/admin/social-media` for platform configuration
+- Support for Facebook, Twitter (X), and LinkedIn posting
+- Manual share buttons on published News and Events in admin panel
+- Configurable auto-posting triggers for each platform (News/Events)
+- Database tracking of all social media posts with success/failure logs
+- API-based approach using environment secrets for credentials:
+  - Facebook: `FACEBOOK_PAGE_ID`, `FACEBOOK_ACCESS_TOKEN`
+  - Twitter: `TWITTER_ACCESS_TOKEN`
+  - LinkedIn: `LINKEDIN_ORGANIZATION_ID`, `LINKEDIN_ACCESS_TOKEN`
+- Service module architecture (`server/social-media.ts`) for easy platform expansion
+- Share dialog UI with platform selection checkboxes
+- Real-time feedback on posting success/failure with toast notifications
+- Post history tracking in `social_media_posts` table
+- Platform-specific settings in `social_media_settings` table
+
+**Admin Portal & Content Management System:**
 - Implemented comprehensive admin portal with role-based access control (admin, staff, volunteer, donor)
 - Session-based authentication using express-session with bcrypt password hashing
 - Admin dashboard at `/admin` with real-time statistics and analytics
@@ -24,7 +41,7 @@ This is a professional website for the Movement for Change and Empowering Future
 - Default admin user: username=admin, password=admin123
 
 **Dynamic Content Management:**
-- Extended database schema with 7 new tables:
+- Extended database schema with 9 new tables:
   - `newsletter_subscribers` - Email subscriptions with timestamps
   - `news_articles` - Dynamic news with slug, content, publish status, featured images
   - `events` - Event management with date/time, location, registration URLs
@@ -32,6 +49,8 @@ This is a professional website for the Movement for Change and Empowering Future
   - `program_registrations` - Event/program registration tracking
   - `settings` - Site-wide configuration management
   - `recurring_donations` - Recurring payment tracking
+  - `social_media_settings` - Platform configuration and auto-post settings
+  - `social_media_posts` - Social media posting history and logs
 - All tables support publish/draft workflow for controlled content release
 
 **Public-Facing Features:**
@@ -50,18 +69,23 @@ This is a professional website for the Movement for Change and Empowering Future
   - `server/auth.ts` - Authentication utilities and middleware
   - `server/admin-routes.ts` - Protected admin endpoints
   - `server/routes.ts` - Public and auth routes
+  - `server/social-media.ts` - Social media posting service module
 - Middleware protection for admin routes (requireAuth, requireAdminOrStaff, requireAdmin)
 - Frontend AuthContext for global authentication state
 - ProtectedRoute component for route-level access control
 - Session storage using PostgreSQL via connect-pg-simple
+- Environment-based secrets management for external API credentials
 
 **Technical Implementation:**
-- Storage layer extended with 30+ new CRUD methods in IStorage interface
+- Storage layer extended with 36+ CRUD methods in IStorage interface
 - Type-safe API with Zod validation for all data operations
 - Frontend admin components with data tables, forms, and dialogs
 - Real-time cache invalidation using TanStack Query
 - Comprehensive test coverage including e2e admin portal testing
-- Impact Metrics Dashboard: Homepage now displays real-time metrics from database, admin can manage via /admin/metrics
+- Impact Metrics Dashboard: Homepage displays real-time metrics from database
+- Social media service with platform-agnostic posting interface
+- Rich Text Editor (TipTap) for News and Events content creation
+- Share functionality with multi-platform selection UI
 
 **Email Integration Note:**
 - User dismissed Resend integration setup
