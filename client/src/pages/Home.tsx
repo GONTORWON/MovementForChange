@@ -82,8 +82,8 @@ export default function Home() {
             {stats.map((stat, index) => (
               <div key={index} data-testid={`stat-${index}`}>
                 <div className="stat-number font-heading font-bold text-white mb-2">{stat.number}</div>
-                <div className="text-secondary-foreground/90 font-medium mb-1">{stat.label}</div>
-                <div className="text-secondary-foreground/75 text-sm">{stat.description}</div>
+                <div className="text-white font-medium mb-1">{stat.label}</div>
+                <div className="text-white text-sm">{stat.description}</div>
               </div>
             ))}
           </div>
