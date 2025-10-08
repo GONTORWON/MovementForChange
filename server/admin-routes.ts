@@ -1,9 +1,10 @@
 import type { Express } from "express";
 import { storage } from "./storage";
 import { requireAdminOrStaff, requireAdmin } from "./auth";
+import { socialMediaService } from "./social-media";
 import { 
   insertNewsArticleSchema, insertEventSchema, insertNewsletterSchema,
-  insertDocumentSchema, insertImpactMetricSchema 
+  insertDocumentSchema, insertImpactMetricSchema, insertSocialMediaSettingSchema 
 } from "@shared/schema";
 
 export function setupAdminRoutes(app: Express) {
@@ -369,6 +370,100 @@ export function setupAdminRoutes(app: Express) {
       res.json(safeUser);
     } catch (error: any) {
       res.status(500).json({ message: "Error updating user: " + error.message });
+    }
+  });
+
+  // ===== SOCIAL MEDIA SETTINGS =====
+  app.get("/api/admin/social-media/settings", requireAdminOrStaff, async (req, res) => {
+    try {
+      const settings = await storage.getSocialMediaSettings();
+      res.json(settings);
+    } catch (error: any) {
+      res.status(500).json({ message: "Error fetching settings: " + error.message });
+    }
+  });
+
+  app.post("/api/admin/social-media/settings", requireAdminOrStaff, async (req, res) => {
+    try {
+      const setting = insertSocialMediaSettingSchema.parse(req.body);
+      const result = await storage.upsertSocialMediaSetting(setting);
+      res.json(result);
+    } catch (error: any) {
+      res.status(400).json({ message: "Invalid setting data: " + error.message });
+    }
+  });
+
+  // ===== SOCIAL MEDIA SHARING =====
+  app.post("/api/admin/social-media/share/:type/:id", requireAdminOrStaff, async (req, res) => {
+    try {
+      const { type, id } = req.params;
+      const { platforms } = req.body;
+
+      let content: any;
+      let contentTitle: string;
+
+      if (type === 'news') {
+        content = await storage.getNewsArticle(id);
+        if (!content) {
+          return res.status(404).json({ message: "News article not found" });
+        }
+        contentTitle = content.title;
+      } else if (type === 'event') {
+        content = await storage.getEvent(id);
+        if (!content) {
+          return res.status(404).json({ message: "Event not found" });
+        }
+        contentTitle = content.title;
+      } else {
+        return res.status(400).json({ message: "Invalid content type" });
+      }
+
+      const postContent = {
+        title: content.title,
+        excerpt: content.excerpt || content.description?.substring(0, 200),
+        url: `${process.env.REPLIT_DOMAINS?.split(',')[0] || 'https://mcefl.replit.app'}/${type === 'news' ? 'news' : 'events'}/${id}`,
+        imageUrl: content.imageUrl,
+      };
+
+      const results = await socialMediaService.postToAllEnabledPlatforms(postContent, platforms);
+
+      // Log posts to database
+      for (const result of results) {
+        const post = await storage.createSocialMediaPost({
+          platform: result.platform,
+          contentType: type,
+          contentId: id,
+          contentTitle,
+          status: result.success ? 'posted' : 'failed',
+          postUrl: result.postId ? undefined : undefined,
+          platformPostId: result.postId,
+          errorMessage: result.error,
+          postedAt: result.success ? new Date() : undefined,
+        });
+
+        if (result.success && post) {
+          await storage.updateSocialMediaPostStatus(
+            post.id,
+            'posted',
+            undefined,
+            result.postId,
+            undefined
+          );
+        }
+      }
+
+      res.json({ results });
+    } catch (error: any) {
+      res.status(500).json({ message: "Error sharing content: " + error.message });
+    }
+  });
+
+  app.get("/api/admin/social-media/posts/:contentId?", requireAdminOrStaff, async (req, res) => {
+    try {
+      const posts = await storage.getSocialMediaPosts(req.params.contentId);
+      res.json(posts);
+    } catch (error: any) {
+      res.status(500).json({ message: "Error fetching posts: " + error.message });
     }
   });
 }

@@ -31,6 +31,7 @@ import AdminTestimonials from "@/pages/AdminTestimonials";
 import AdminNews from "@/pages/AdminNews";
 import AdminEvents from "@/pages/AdminEvents";
 import AdminMetrics from "@/pages/AdminMetrics";
+import AdminSocialMedia from "@/pages/AdminSocialMedia";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -73,6 +74,11 @@ function Router() {
       <Route path="/admin/metrics">
         <ProtectedRoute requiredRole="staff">
           <AdminMetrics />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/admin/social-media">
+        <ProtectedRoute requiredRole="staff">
+          <AdminSocialMedia />
         </ProtectedRoute>
       </Route>
 

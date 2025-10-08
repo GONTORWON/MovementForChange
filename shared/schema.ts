@@ -203,9 +203,8 @@ export const insertImpactMetricSchema = createInsertSchema(impactMetrics).omit({
   updatedAt: true,
 });
 
-export const insertSocialMediaConnectionSchema = createInsertSchema(socialMediaConnections).omit({
+export const insertSocialMediaSettingSchema = createInsertSchema(socialMediaSettings).omit({
   id: true,
-  createdAt: true,
   updatedAt: true,
 });
 
@@ -222,8 +221,8 @@ export type VolunteerApplication = typeof volunteerApplications.$inferSelect;
 export type InsertVolunteerApplication = z.infer<typeof insertVolunteerApplicationSchema>;
 export type Donation = typeof donations.$inferSelect;
 export type InsertDonation = z.infer<typeof insertDonationSchema>;
-export type SocialMediaConnection = typeof socialMediaConnections.$inferSelect;
-export type InsertSocialMediaConnection = z.infer<typeof insertSocialMediaConnectionSchema>;
+export type SocialMediaSetting = typeof socialMediaSettings.$inferSelect;
+export type InsertSocialMediaSetting = z.infer<typeof insertSocialMediaSettingSchema>;
 export type SocialMediaPost = typeof socialMediaPosts.$inferSelect;
 export type InsertSocialMediaPost = z.infer<typeof insertSocialMediaPostSchema>;
 export type Testimonial = typeof testimonials.$inferSelect;

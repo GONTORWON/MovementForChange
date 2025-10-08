@@ -1,13 +1,16 @@
 import { 
   users, contactSubmissions, volunteerApplications, donations, testimonials,
   newsArticles, events, newsletters, documents, programRegistrations, impactMetrics,
+  socialMediaSettings, socialMediaPosts,
   type User, type InsertUser, type ContactSubmission, type InsertContactSubmission,
   type VolunteerApplication, type InsertVolunteerApplication,
   type Donation, type InsertDonation, type Testimonial, type InsertTestimonial,
   type NewsArticle, type InsertNewsArticle, type Event, type InsertEvent,
   type Newsletter, type InsertNewsletter, type Document, type InsertDocument,
   type ProgramRegistration, type InsertProgramRegistration,
-  type ImpactMetric, type InsertImpactMetric
+  type ImpactMetric, type InsertImpactMetric,
+  type SocialMediaSetting, type InsertSocialMediaSetting,
+  type SocialMediaPost, type InsertSocialMediaPost
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, sql } from "drizzle-orm";
@@ -78,6 +81,14 @@ export interface IStorage {
   upsertImpactMetric(metric: InsertImpactMetric): Promise<ImpactMetric>;
   updateImpactMetric(id: string, metric: Partial<InsertImpactMetric>): Promise<ImpactMetric | undefined>;
   deleteImpactMetric(id: string): Promise<boolean>;
+
+  // Social Media
+  getSocialMediaSettings(): Promise<SocialMediaSetting[]>;
+  getSocialMediaSetting(platform: string): Promise<SocialMediaSetting | undefined>;
+  upsertSocialMediaSetting(setting: InsertSocialMediaSetting): Promise<SocialMediaSetting>;
+  createSocialMediaPost(post: InsertSocialMediaPost): Promise<SocialMediaPost>;
+  getSocialMediaPosts(contentId?: string): Promise<SocialMediaPost[]>;
+  updateSocialMediaPostStatus(id: string, status: string, postUrl?: string, platformPostId?: string, error?: string): Promise<SocialMediaPost | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -348,6 +359,50 @@ export class DatabaseStorage implements IStorage {
   async deleteImpactMetric(id: string): Promise<boolean> {
     const result = await db.delete(impactMetrics).where(eq(impactMetrics.id, id));
     return result.rowCount !== null && result.rowCount > 0;
+  }
+
+  async getSocialMediaSettings(): Promise<SocialMediaSetting[]> {
+    return await db.select().from(socialMediaSettings).orderBy(socialMediaSettings.platform);
+  }
+
+  async getSocialMediaSetting(platform: string): Promise<SocialMediaSetting | undefined> {
+    const [result] = await db.select().from(socialMediaSettings).where(eq(socialMediaSettings.platform, platform));
+    return result || undefined;
+  }
+
+  async upsertSocialMediaSetting(setting: InsertSocialMediaSetting): Promise<SocialMediaSetting> {
+    const [result] = await db
+      .insert(socialMediaSettings)
+      .values(setting)
+      .onConflictDoUpdate({
+        target: socialMediaSettings.platform,
+        set: { ...setting, updatedAt: new Date() }
+      })
+      .returning();
+    return result;
+  }
+
+  async createSocialMediaPost(post: InsertSocialMediaPost): Promise<SocialMediaPost> {
+    const [result] = await db.insert(socialMediaPosts).values(post).returning();
+    return result;
+  }
+
+  async getSocialMediaPosts(contentId?: string): Promise<SocialMediaPost[]> {
+    if (contentId) {
+      return await db.select().from(socialMediaPosts).where(eq(socialMediaPosts.contentId, contentId)).orderBy(desc(socialMediaPosts.createdAt));
+    }
+    return await db.select().from(socialMediaPosts).orderBy(desc(socialMediaPosts.createdAt));
+  }
+
+  async updateSocialMediaPostStatus(id: string, status: string, postUrl?: string, platformPostId?: string, error?: string): Promise<SocialMediaPost | undefined> {
+    const updateData: any = { status };
+    if (postUrl) updateData.postUrl = postUrl;
+    if (platformPostId) updateData.platformPostId = platformPostId;
+    if (error) updateData.errorMessage = error;
+    if (status === 'posted') updateData.postedAt = new Date();
+
+    const [result] = await db.update(socialMediaPosts).set(updateData).where(eq(socialMediaPosts.id, id)).returning();
+    return result || undefined;
   }
 }
 

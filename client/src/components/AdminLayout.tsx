@@ -1,7 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/lib/AuthContext";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, FileText, Calendar, Mail, Settings, LogOut, Heart, MessageSquare, BarChart, Menu, Home } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Calendar, Mail, Settings, LogOut, Heart, MessageSquare, BarChart, Menu, Home, Share2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 
@@ -30,6 +30,7 @@ export default function AdminLayout({ children, title, description }: AdminLayou
     { icon: Calendar, label: "Events", path: "/admin/events" },
     { icon: Mail, label: "Newsletter", path: "/admin/newsletter" },
     { icon: BarChart, label: "Impact Metrics", path: "/admin/metrics" },
+    { icon: Share2, label: "Social Media", path: "/admin/social-media" },
   ];
 
   if (user?.role === 'admin') {
