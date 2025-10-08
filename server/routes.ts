@@ -2,7 +2,9 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import Stripe from "stripe";
 import { storage } from "./storage";
-import { insertContactSubmissionSchema, insertVolunteerApplicationSchema, insertDonationSchema } from "@shared/schema";
+import { authUtils, requireAuth, requireAdminOrStaff } from "./auth";
+import { setupAdminRoutes } from "./admin-routes";
+import { insertContactSubmissionSchema, insertVolunteerApplicationSchema, insertDonationSchema, insertTestimonialSchema, insertNewsletterSchema } from "@shared/schema";
 
 if (!process.env.STRIPE_SECRET_KEY) {
   console.warn('STRIPE_SECRET_KEY not found in environment variables. Donation functionality will be limited.');
@@ -14,6 +16,79 @@ const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SEC
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
+  // ===== AUTH ROUTES =====
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      
+      if (!username || !password) {
+        return res.status(400).json({ message: "Username and password required" });
+      }
+
+      const user = await authUtils.authenticateUser(username, password);
+      if (!user) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
+      req.session.userId = user.id;
+      req.session.username = user.username;
+      req.session.userRole = user.role;
+
+      const { password: _, ...safeUser } = user;
+      res.json({ user: safeUser });
+    } catch (error: any) {
+      res.status(500).json({ message: "Login error: " + error.message });
+    }
+  });
+
+  app.post("/api/auth/logout", requireAuth, (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ message: "Logout error" });
+      }
+      res.json({ success: true });
+    });
+  });
+
+  app.get("/api/auth/me", requireAuth, async (req, res) => {
+    try {
+      const user = await storage.getUser(req.session.userId!);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      const { password: _, ...safeUser } = user;
+      res.json(safeUser);
+    } catch (error: any) {
+      res.status(500).json({ message: "Error fetching user: " + error.message });
+    }
+  });
+
+  app.post("/api/auth/register", async (req, res) => {
+    try {
+      const { username, password, email, fullName } = req.body;
+      
+      if (!username || !password) {
+        return res.status(400).json({ message: "Username and password required" });
+      }
+
+      const existing = await storage.getUserByUsername(username);
+      if (existing) {
+        return res.status(409).json({ message: "Username already exists" });
+      }
+
+      const user = await authUtils.createUser(username, password, email, fullName);
+      const { password: _, ...safeUser } = user;
+      res.status(201).json({ user: safeUser });
+    } catch (error: any) {
+      res.status(500).json({ message: "Registration error: " + error.message });
+    }
+  });
+
+  // Setup admin routes
+  setupAdminRoutes(app);
+
+  // ===== PUBLIC API ROUTES =====
+
   // Contact form submission
   app.post("/api/contact", async (req, res) => {
     try {
@@ -155,6 +230,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(testimonials);
     } catch (error: any) {
       res.status(500).json({ message: "Error fetching testimonials: " + error.message });
+    }
+  });
+
+  // Submit testimonial (requires approval)
+  app.post("/api/testimonials", async (req, res) => {
+    try {
+      const testimonial = insertTestimonialSchema.parse(req.body);
+      const result = await storage.createTestimonial(testimonial);
+      res.json({ success: true, id: result.id, message: "Testimonial submitted for review" });
+    } catch (error: any) {
+      res.status(400).json({ message: "Invalid testimonial: " + error.message });
+    }
+  });
+
+  // Newsletter subscription
+  app.post("/api/newsletter", async (req, res) => {
+    try {
+      const newsletter = insertNewsletterSchema.parse(req.body);
+      const result = await storage.createNewsletter(newsletter);
+      res.json({ success: true, id: result.id });
+    } catch (error: any) {
+      if (error.message?.includes('duplicate')) {
+        return res.status(409).json({ message: "Email already subscribed" });
+      }
+      res.status(400).json({ message: "Invalid subscription: " + error.message });
+    }
+  });
+
+  // Get published news articles
+  app.get("/api/news", async (req, res) => {
+    try {
+      const articles = await storage.getNewsArticles(true);
+      res.json(articles);
+    } catch (error: any) {
+      res.status(500).json({ message: "Error fetching news: " + error.message });
+    }
+  });
+
+  // Get published events
+  app.get("/api/events", async (req, res) => {
+    try {
+      const events = await storage.getEvents(true);
+      res.json(events);
+    } catch (error: any) {
+      res.status(500).json({ message: "Error fetching events: " + error.message });
+    }
+  });
+
+  // Get published documents
+  app.get("/api/documents", async (req, res) => {
+    try {
+      const documents = await storage.getDocuments(true);
+      res.json(documents);
+    } catch (error: any) {
+      res.status(500).json({ message: "Error fetching documents: " + error.message });
+    }
+  });
+
+  // Get impact metrics
+  app.get("/api/metrics", async (req, res) => {
+    try {
+      const metrics = await storage.getImpactMetrics();
+      res.json(metrics);
+    } catch (error: any) {
+      res.status(500).json({ message: "Error fetching metrics: " + error.message });
     }
   });
 
