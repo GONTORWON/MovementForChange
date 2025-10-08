@@ -121,6 +121,35 @@ export const impactMetrics = pgTable("impact_metrics", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const socialMediaConnections = pgTable("social_media_connections", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  platform: text("platform").notNull(), // 'facebook', 'twitter', 'linkedin', 'instagram'
+  accountName: text("account_name").notNull(),
+  accountId: text("account_id").notNull(), // Platform-specific ID (page ID, user ID, etc.)
+  accessToken: text("access_token").notNull(),
+  refreshToken: text("refresh_token"),
+  tokenExpiresAt: timestamp("token_expires_at"),
+  isActive: boolean("is_active").default(true).notNull(),
+  autoPostNews: boolean("auto_post_news").default(true).notNull(),
+  autoPostEvents: boolean("auto_post_events").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const socialMediaPosts = pgTable("social_media_posts", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  platform: text("platform").notNull(),
+  connectionId: varchar("connection_id").notNull(),
+  contentType: text("content_type").notNull(), // 'news' or 'event'
+  contentId: varchar("content_id").notNull(), // ID of the news article or event
+  postUrl: text("post_url"),
+  platformPostId: text("platform_post_id"),
+  status: text("status").notNull(), // 'pending', 'posted', 'failed'
+  errorMessage: text("error_message"),
+  postedAt: timestamp("posted_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
   createdAt: true,
@@ -179,6 +208,17 @@ export const insertImpactMetricSchema = createInsertSchema(impactMetrics).omit({
   updatedAt: true,
 });
 
+export const insertSocialMediaConnectionSchema = createInsertSchema(socialMediaConnections).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertSocialMediaPostSchema = createInsertSchema(socialMediaPosts).omit({
+  id: true,
+  createdAt: true,
+});
+
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type ContactSubmission = typeof contactSubmissions.$inferSelect;
@@ -187,6 +227,10 @@ export type VolunteerApplication = typeof volunteerApplications.$inferSelect;
 export type InsertVolunteerApplication = z.infer<typeof insertVolunteerApplicationSchema>;
 export type Donation = typeof donations.$inferSelect;
 export type InsertDonation = z.infer<typeof insertDonationSchema>;
+export type SocialMediaConnection = typeof socialMediaConnections.$inferSelect;
+export type InsertSocialMediaConnection = z.infer<typeof insertSocialMediaConnectionSchema>;
+export type SocialMediaPost = typeof socialMediaPosts.$inferSelect;
+export type InsertSocialMediaPost = z.infer<typeof insertSocialMediaPostSchema>;
 export type Testimonial = typeof testimonials.$inferSelect;
 export type InsertTestimonial = z.infer<typeof insertTestimonialSchema>;
 export type NewsArticle = typeof newsArticles.$inferSelect;
