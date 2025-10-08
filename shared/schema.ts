@@ -121,27 +121,22 @@ export const impactMetrics = pgTable("impact_metrics", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const socialMediaConnections = pgTable("social_media_connections", {
+export const socialMediaSettings = pgTable("social_media_settings", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  platform: text("platform").notNull(), // 'facebook', 'twitter', 'linkedin', 'instagram'
-  accountName: text("account_name").notNull(),
-  accountId: text("account_id").notNull(), // Platform-specific ID (page ID, user ID, etc.)
-  accessToken: text("access_token").notNull(),
-  refreshToken: text("refresh_token"),
-  tokenExpiresAt: timestamp("token_expires_at"),
-  isActive: boolean("is_active").default(true).notNull(),
-  autoPostNews: boolean("auto_post_news").default(true).notNull(),
-  autoPostEvents: boolean("auto_post_events").default(true).notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  platform: text("platform").notNull().unique(), // 'facebook', 'twitter', 'linkedin'
+  isEnabled: boolean("is_enabled").default(false).notNull(),
+  autoPostNews: boolean("auto_post_news").default(false).notNull(),
+  autoPostEvents: boolean("auto_post_events").default(false).notNull(),
+  accountName: text("account_name"),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export const socialMediaPosts = pgTable("social_media_posts", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   platform: text("platform").notNull(),
-  connectionId: varchar("connection_id").notNull(),
   contentType: text("content_type").notNull(), // 'news' or 'event'
   contentId: varchar("content_id").notNull(), // ID of the news article or event
+  contentTitle: text("content_title").notNull(),
   postUrl: text("post_url"),
   platformPostId: text("platform_post_id"),
   status: text("status").notNull(), // 'pending', 'posted', 'failed'
