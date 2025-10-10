@@ -313,16 +313,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get impact metrics
-  app.get("/api/metrics", async (req, res) => {
-    try {
-      const metrics = await storage.getImpactMetrics();
-      res.json(metrics);
-    } catch (error: any) {
-      res.status(500).json({ message: "Error fetching metrics: " + error.message });
-    }
-  });
-
   const httpServer = createServer(app);
 
   return httpServer;
