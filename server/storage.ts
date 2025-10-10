@@ -63,6 +63,7 @@ export interface IStorage {
   createNewsletter(newsletter: InsertNewsletter): Promise<Newsletter>;
   getNewsletters(): Promise<Newsletter[]>;
   updateNewsletterSubscription(id: string, isSubscribed: boolean): Promise<Newsletter | undefined>;
+  deleteNewsletter(id: string): Promise<boolean>;
   
   // Documents
   createDocument(document: InsertDocument): Promise<Document>;
@@ -284,6 +285,11 @@ export class DatabaseStorage implements IStorage {
   async updateNewsletterSubscription(id: string, isSubscribed: boolean): Promise<Newsletter | undefined> {
     const [result] = await db.update(newsletters).set({ isSubscribed }).where(eq(newsletters.id, id)).returning();
     return result || undefined;
+  }
+
+  async deleteNewsletter(id: string): Promise<boolean> {
+    const result = await db.delete(newsletters).where(eq(newsletters.id, id));
+    return result.rowCount !== null && result.rowCount > 0;
   }
 
   async createDocument(document: InsertDocument): Promise<Document> {

@@ -32,6 +32,9 @@ import AdminNews from "@/pages/AdminNews";
 import AdminEvents from "@/pages/AdminEvents";
 import AdminMetrics from "@/pages/AdminMetrics";
 import AdminSocialMedia from "@/pages/AdminSocialMedia";
+import AdminNewsletter from "@/pages/AdminNewsletter";
+import AdminUsers from "@/pages/AdminUsers";
+import AdminDocuments from "@/pages/AdminDocuments";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -79,6 +82,21 @@ function Router() {
       <Route path="/admin/social-media">
         <ProtectedRoute requiredRole="staff">
           <AdminSocialMedia />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/admin/newsletter">
+        <ProtectedRoute requiredRole="staff">
+          <AdminNewsletter />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/admin/users">
+        <ProtectedRoute requiredRole="admin">
+          <AdminUsers />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/admin/documents">
+        <ProtectedRoute requiredRole="staff">
+          <AdminDocuments />
         </ProtectedRoute>
       </Route>
 

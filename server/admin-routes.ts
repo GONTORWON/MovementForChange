@@ -234,6 +234,37 @@ export function setupAdminRoutes(app: Express) {
     }
   });
 
+  app.delete("/api/admin/newsletters/:id", requireAdminOrStaff, async (req, res) => {
+    try {
+      const success = await storage.deleteNewsletter(req.params.id);
+      if (!success) {
+        return res.status(404).json({ message: "Newsletter subscriber not found" });
+      }
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ message: "Error deleting subscriber: " + error.message });
+    }
+  });
+
+  app.get("/api/admin/newsletters/export", requireAdminOrStaff, async (req, res) => {
+    try {
+      const newsletters = await storage.getNewsletters();
+      
+      // Create CSV content
+      const csvHeader = "Email,Status,Subscribed Date\n";
+      const csvRows = newsletters.map(n => 
+        `${n.email},${n.isSubscribed ? 'Active' : 'Unsubscribed'},${new Date(n.createdAt).toISOString()}`
+      ).join("\n");
+      const csv = csvHeader + csvRows;
+
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', 'attachment; filename=newsletter-subscribers.csv');
+      res.send(csv);
+    } catch (error: any) {
+      res.status(500).json({ message: "Error exporting newsletters: " + error.message });
+    }
+  });
+
   // ===== DOCUMENTS =====
   app.get("/api/admin/documents", requireAdminOrStaff, async (req, res) => {
     try {
@@ -356,6 +387,27 @@ export function setupAdminRoutes(app: Express) {
       res.json(safeUsers);
     } catch (error: any) {
       res.status(500).json({ message: "Error fetching users: " + error.message });
+    }
+  });
+
+  app.post("/api/admin/users", requireAdmin, async (req, res) => {
+    try {
+      const { username, password, email, fullName, role } = req.body;
+      
+      // Check if username already exists
+      const existing = await storage.getUserByUsername(username);
+      if (existing) {
+        return res.status(409).json({ message: "Username already exists" });
+      }
+
+      // Use the auth utility to create user with hashed password
+      const { createUser } = await import("./auth");
+      const user = await createUser(username, password, email, fullName, role);
+      
+      const { password: _, ...safeUser } = user;
+      res.status(201).json(safeUser);
+    } catch (error: any) {
+      res.status(500).json({ message: "Error creating user: " + error.message });
     }
   });
 
