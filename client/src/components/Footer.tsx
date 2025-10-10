@@ -50,16 +50,16 @@ export default function Footer() {
               Building stronger societies through youth leadership, social empowerment, and compassion-driven action.
             </p>
             <div className="flex space-x-3">
-              <a href="#" className="w-10 h-10 bg-white/10 dark:bg-muted hover:bg-primary rounded-full flex items-center justify-center transition-all" data-testid="footer-social-facebook">
+              <a href="https://facebook.com/mcefl.liberia" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 dark:bg-muted hover:bg-primary rounded-full flex items-center justify-center transition-all" data-testid="footer-social-facebook" aria-label="Visit MCEFL on Facebook">
                 <i className="fab fa-facebook-f"></i>
               </a>
-              <a href="#" className="w-10 h-10 bg-white/10 dark:bg-muted hover:bg-primary rounded-full flex items-center justify-center transition-all" data-testid="footer-social-instagram">
+              <a href="https://instagram.com/mcefl.liberia" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 dark:bg-muted hover:bg-primary rounded-full flex items-center justify-center transition-all" data-testid="footer-social-instagram" aria-label="Visit MCEFL on Instagram">
                 <i className="fab fa-instagram"></i>
               </a>
-              <a href="#" className="w-10 h-10 bg-white/10 dark:bg-muted hover:bg-primary rounded-full flex items-center justify-center transition-all" data-testid="footer-social-twitter">
+              <a href="https://twitter.com/mcefl_liberia" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 dark:bg-muted hover:bg-primary rounded-full flex items-center justify-center transition-all" data-testid="footer-social-twitter" aria-label="Visit MCEFL on Twitter">
                 <i className="fab fa-twitter"></i>
               </a>
-              <a href="#" className="w-10 h-10 bg-white/10 dark:bg-muted hover:bg-primary rounded-full flex items-center justify-center transition-all" data-testid="footer-social-linkedin">
+              <a href="https://linkedin.com/company/mcefl" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 dark:bg-muted hover:bg-primary rounded-full flex items-center justify-center transition-all" data-testid="footer-social-linkedin" aria-label="Visit MCEFL on LinkedIn">
                 <i className="fab fa-linkedin-in"></i>
               </a>
             </div>
@@ -83,12 +83,12 @@ export default function Footer() {
           <div>
             <h4 className="font-heading font-bold text-lg mb-6 text-white dark:text-foreground">Our Programs</h4>
             <ul className="space-y-3">
-              <li><a href="#" className="text-white/80 dark:text-muted-foreground hover:text-primary transition-colors" data-testid="footer-program-leadership">Leadership Development</a></li>
-              <li><a href="#" className="text-white/80 dark:text-muted-foreground hover:text-primary transition-colors" data-testid="footer-program-community">Community Engagement</a></li>
-              <li><a href="#" className="text-white/80 dark:text-muted-foreground hover:text-primary transition-colors" data-testid="footer-program-mentorship">Youth Mentorship</a></li>
-              <li><a href="#" className="text-white/80 dark:text-muted-foreground hover:text-primary transition-colors" data-testid="footer-program-education">Educational Support</a></li>
-              <li><a href="#" className="text-white/80 dark:text-muted-foreground hover:text-primary transition-colors" data-testid="footer-program-empower-her">Empower Her</a></li>
-              <li><a href="#" className="text-white/80 dark:text-muted-foreground hover:text-primary transition-colors" data-testid="footer-program-advocacy">Policy & Advocacy</a></li>
+              <li><Link href="/programs" className="text-white/80 dark:text-muted-foreground hover:text-primary transition-colors" data-testid="footer-program-leadership">Leadership Development</Link></li>
+              <li><Link href="/programs" className="text-white/80 dark:text-muted-foreground hover:text-primary transition-colors" data-testid="footer-program-community">Community Engagement</Link></li>
+              <li><Link href="/programs" className="text-white/80 dark:text-muted-foreground hover:text-primary transition-colors" data-testid="footer-program-mentorship">Youth Mentorship</Link></li>
+              <li><Link href="/programs" className="text-white/80 dark:text-muted-foreground hover:text-primary transition-colors" data-testid="footer-program-education">Educational Support</Link></li>
+              <li><Link href="/programs" className="text-white/80 dark:text-muted-foreground hover:text-primary transition-colors" data-testid="footer-program-empower-her">Empower Her</Link></li>
+              <li><Link href="/programs" className="text-white/80 dark:text-muted-foreground hover:text-primary transition-colors" data-testid="footer-program-advocacy">Policy & Advocacy</Link></li>
             </ul>
           </div>
 

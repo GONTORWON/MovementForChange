@@ -401,8 +401,8 @@ export function setupAdminRoutes(app: Express) {
       }
 
       // Use the auth utility to create user with hashed password
-      const { createUser } = await import("./auth");
-      const user = await createUser(username, password, email, fullName, role);
+      const { authUtils } = await import("./auth");
+      const user = await authUtils.createUser(username, password, email, fullName, role);
       
       const { password: _, ...safeUser } = user;
       res.status(201).json(safeUser);

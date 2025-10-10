@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import SEO from "@/components/SEO";
 
 export default function Home() {
   const { data: metricsData } = useQuery({
@@ -17,6 +18,11 @@ export default function Home() {
 
   return (
     <>
+      <SEO 
+        title="Home"
+        description="Movement for Change and Empowering Future Leaders (MCEFL) - Uplifting communities in Liberia through youth leadership, education, and compassion-driven action. Join us in empowering the next generation."
+        ogType="website"
+      />
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center" data-testid="hero-section">
         <div 

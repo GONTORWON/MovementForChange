@@ -12,7 +12,8 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 
 // Load Stripe outside of component
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || "pk_test_placeholder");
+const stripeKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
+const stripePromise = stripeKey ? loadStripe(stripeKey) : null;
 
 // Donation amounts
 const PRESET_AMOUNTS = [25, 50, 100, 250, 500];
@@ -336,6 +337,42 @@ export default function Donate() {
                   donorInfo={donorInfo}
                 />
               </Elements>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Check if Stripe is configured
+  if (!stripePromise) {
+    return (
+      <div className="py-20 bg-background">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Card className="border-destructive">
+            <CardContent className="p-8 text-center">
+              <div className="mb-4">
+                <i className="fas fa-exclamation-triangle text-destructive text-5xl"></i>
+              </div>
+              <h2 className="font-heading font-bold text-2xl text-foreground mb-4">
+                Donation System Temporarily Unavailable
+              </h2>
+              <p className="text-muted-foreground mb-6">
+                We're currently unable to process online donations due to payment system configuration. 
+                Please contact us directly to make a donation, or try again later.
+              </p>
+              <div className="flex gap-4 justify-center">
+                <Link href="/contact">
+                  <Button className="bg-primary" data-testid="contact-button">
+                    Contact Us
+                  </Button>
+                </Link>
+                <Link href="/">
+                  <Button variant="outline" data-testid="home-button">
+                    Back to Home
+                  </Button>
+                </Link>
+              </div>
             </CardContent>
           </Card>
         </div>
