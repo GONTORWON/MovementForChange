@@ -106,7 +106,7 @@ export default function Navigation() {
             </Button>
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" data-testid="mobile-menu-trigger">
+                <Button variant="ghost" size="icon" data-testid="mobile-menu-trigger" aria-label="Open navigation menu">
                   <i className="fas fa-bars text-2xl"></i>
                 </Button>
               </SheetTrigger>

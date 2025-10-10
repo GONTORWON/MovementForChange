@@ -42,7 +42,7 @@ export default function AdminLayout({ children, title, description }: AdminLayou
       {/* Mobile Header */}
       <div className="lg:hidden bg-card border-b p-4 flex justify-between items-center">
         <h1 className="text-xl font-bold">MCEFL Admin</h1>
-        <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} data-testid="button-mobile-menu">
+        <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} data-testid="button-mobile-menu" aria-label="Toggle navigation menu">
           <Menu className="h-6 w-6" />
         </Button>
       </div>
@@ -71,7 +71,7 @@ export default function AdminLayout({ children, title, description }: AdminLayou
                 asChild
                 data-testid={`link-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
               >
-                <Link href={item.path}>
+                <Link href={item.path} onClick={() => setMobileMenuOpen(false)}>
                   <item.icon className="mr-2 h-4 w-4" />
                   {item.label}
                 </Link>
