@@ -2,7 +2,16 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Moon, Sun } from "lucide-react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
+import { Moon, Sun, ChevronDown } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
 
 export default function Navigation() {
@@ -23,11 +32,49 @@ export default function Navigation() {
   const navItems = [
     { href: "/", label: "Home" },
     { href: "/about", label: "About Us" },
-    { href: "/programs", label: "Programs" },
     { href: "/get-involved", label: "Get Involved" },
     { href: "/testimonials", label: "Testimonials" },
     { href: "/news-events", label: "News & Events" },
     { href: "/contact", label: "Contact" },
+  ];
+
+  const programNavItems = [
+    { 
+      slug: "leadership-development", 
+      label: "Leadership Development",
+      icon: "fas fa-users-cog",
+      description: "Training future leaders"
+    },
+    { 
+      slug: "community-engagement", 
+      label: "Community Engagement",
+      icon: "fas fa-hands-helping",
+      description: "Grassroots outreach projects"
+    },
+    { 
+      slug: "youth-mentorship", 
+      label: "Youth Mentorship",
+      icon: "fas fa-user-graduate",
+      description: "Connecting youth with mentors"
+    },
+    { 
+      slug: "educational-support", 
+      label: "Educational Support",
+      icon: "fas fa-book-reader",
+      description: "Supporting orphans with supplies"
+    },
+    { 
+      slug: "empower-her", 
+      label: "Empower Her",
+      icon: "fas fa-female",
+      description: "Uplifting young girls"
+    },
+    { 
+      slug: "policy-advocacy", 
+      label: "Policy & Advocacy",
+      icon: "fas fa-balance-scale",
+      description: "Empowering civic engagement"
+    },
   ];
 
   const isActive = (href: string) => {
@@ -67,6 +114,50 @@ export default function Navigation() {
                 {item.label}
               </Link>
             ))}
+            
+            {/* Programs Dropdown */}
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger 
+                    className={`font-medium bg-transparent hover:bg-transparent data-[state=open]:bg-transparent ${
+                      location.startsWith('/programs') ? 'text-primary' : 'text-foreground'
+                    }`}
+                    data-testid="nav-programs-dropdown"
+                  >
+                    Programs
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="grid w-[600px] gap-3 p-6 md:grid-cols-2">
+                      {programNavItems.map((program) => (
+                        <NavigationMenuLink key={program.slug} asChild>
+                          <Link
+                            href={`/programs/${program.slug}`}
+                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                            data-testid={`link-program-${program.slug}`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                <i className={`${program.icon} text-primary text-lg`}></i>
+                              </div>
+                              <div>
+                                <div className="text-sm font-medium leading-none mb-1">
+                                  {program.label}
+                                </div>
+                                <p className="line-clamp-1 text-xs leading-snug text-muted-foreground">
+                                  {program.description}
+                                </p>
+                              </div>
+                            </div>
+                          </Link>
+                        </NavigationMenuLink>
+                      ))}
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+
             <Button
               variant="ghost"
               size="icon"
@@ -125,6 +216,39 @@ export default function Navigation() {
                       {item.label}
                     </Link>
                   ))}
+                  
+                  {/* Programs Accordion for Mobile */}
+                  <Accordion type="single" collapsible className="border-b border-border">
+                    <AccordionItem value="programs" className="border-0">
+                      <AccordionTrigger 
+                        className={`py-2 font-medium hover:no-underline ${
+                          location.startsWith('/programs') ? 'text-primary' : 'text-foreground'
+                        }`}
+                        data-testid="mobile-nav-programs"
+                      >
+                        Programs
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-2">
+                        <div className="flex flex-col space-y-2 pl-4">
+                          {programNavItems.map((program) => (
+                            <Link
+                              key={program.slug}
+                              href={`/programs/${program.slug}`}
+                              className="flex items-center gap-3 py-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                              onClick={() => setIsOpen(false)}
+                              data-testid={`mobile-link-program-${program.slug}`}
+                            >
+                              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                <i className={`${program.icon} text-primary text-sm`}></i>
+                              </div>
+                              <span>{program.label}</span>
+                            </Link>
+                          ))}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+
                   <Link href="/donate" onClick={() => setIsOpen(false)}>
                     <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 mt-4" data-testid="mobile-donate-button">
                       Donate Now

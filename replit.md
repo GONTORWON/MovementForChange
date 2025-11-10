@@ -6,6 +6,15 @@ This is a professional website for the Movement for Change and Empowering Future
 
 ## Recent Changes (October 2025)
 
+**Navigation Enhancement (November 10, 2025):**
+- Implemented Programs dropdown menu in main navigation
+  - Desktop: Hover-activated NavigationMenu with 2-column grid layout
+  - Mobile: Accordion-based expandable menu in mobile Sheet
+  - Shows all 6 programs with icons and descriptions
+  - Fully accessible with keyboard navigation support
+  - Active state indication when on Programs pages
+  - Links to individual program detail pages
+
 **Deployment Readiness Improvements (October 10, 2025):**
 - Fixed duplicate `/api/metrics` API route conflict
 - Added complete admin pages for missing features:
