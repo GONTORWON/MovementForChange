@@ -89,10 +89,7 @@ export default function AdminTasks() {
 
   const createTaskMutation = useMutation({
     mutationFn: async (data: TaskFormData) => {
-      return await apiRequest("/api/admin/tasks", {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
+      return await apiRequest("/api/admin/tasks", "POST", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/tasks"] });
@@ -114,9 +111,7 @@ export default function AdminTasks() {
 
   const deleteTaskMutation = useMutation({
     mutationFn: async (id: string) => {
-      return await apiRequest(`/api/admin/tasks/${id}`, {
-        method: "DELETE",
-      });
+      return await apiRequest(`/api/admin/tasks/${id}`, "DELETE");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/tasks"] });

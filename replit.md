@@ -2,176 +2,7 @@
 
 ## Overview
 
-This is a professional website for the Movement for Change and Empowering Future Leaders (MCEFL), a Liberian NGO focused on youth empowerment, leadership development, and community support. The platform provides information about programs, enables volunteer applications, facilitates donations through Stripe, and showcases testimonials. The application is built as a modern full-stack web application with a React frontend and Express backend.
-
-## Recent Changes (October 2025)
-
-**Navigation Enhancement (November 10, 2025):**
-- Implemented Programs dropdown menu in main navigation
-  - **Positioned immediately after About Us menu** for optimal UX
-  - Desktop: Hover-activated NavigationMenu with 2-column grid layout
-  - Mobile: Accordion-based expandable menu in mobile Sheet
-  - Shows all 6 programs with icons and descriptions
-  - Fully accessible with keyboard navigation and `aria-current` attributes
-  - Active state indication (visual + ARIA) when on Programs pages
-  - Links to individual program detail pages
-- Final navigation order: Home → About Us → **Programs** → Get Involved → Testimonials → News & Events → Contact
-
-**Deployment Readiness Improvements (October 10, 2025):**
-- Fixed duplicate `/api/metrics` API route conflict
-- Added complete admin pages for missing features:
-  - AdminNewsletter: View, delete, and export newsletter subscribers
-  - AdminUsers: Full user management with role assignment (admin-only access)
-  - AdminDocuments: Document upload and management interface
-  - AdminDonations: View and track all donation transactions with summary stats
-- Implemented SEO optimization with reusable SEO component using react-helmet
-  - Meta tags, OpenGraph, and Twitter cards support
-  - Applied to homepage with template for other pages
-- Enhanced footer with proper social media links and accessibility:
-  - Real URLs for Facebook, Instagram, Twitter, LinkedIn with target="_blank" and rel="noopener noreferrer"
-  - Footer program links now navigate to /programs page
-  - All social links have aria-labels for screen readers
-- Added graceful Stripe error handling when payment credentials are missing
-  - User-friendly error message with contact and home buttons
-  - No crashes or console errors when VITE_STRIPE_PUBLIC_KEY is not configured
-- Improved accessibility across navigation components:
-  - Added aria-labels to mobile menu triggers (both public and admin navigation)
-  - All interactive elements have proper data-testid attributes
-  - Theme toggle buttons have descriptive aria-labels
-- Enhanced admin mobile navigation:
-  - Auto-close functionality when clicking menu items
-  - Proper aria-labels on hamburger menu buttons
-  - Responsive sidebar with smooth transitions
-- Comprehensive end-to-end testing completed successfully:
-  - All public pages functional (home, about, programs, contact, etc.)
-  - Admin portal fully operational with all CRUD operations
-  - Newsletter subscription and contact form submissions verified
-  - Theme toggle (light/dark mode) working correctly
-  - Mobile navigation tested and confirmed working
-
-**Social Media Integration (October 2025):**
-- Comprehensive social media auto-posting system for News and Events
-- Admin settings page at `/admin/social-media` for platform configuration
-- Support for Facebook, Twitter (X), and LinkedIn posting
-- Manual share buttons on published News and Events in admin panel
-- Configurable auto-posting triggers for each platform (News/Events)
-- Database tracking of all social media posts with success/failure logs
-- API-based approach using environment secrets for credentials:
-  - Facebook: `FACEBOOK_PAGE_ID`, `FACEBOOK_ACCESS_TOKEN`
-  - Twitter: `TWITTER_ACCESS_TOKEN`
-  - LinkedIn: `LINKEDIN_ORGANIZATION_ID`, `LINKEDIN_ACCESS_TOKEN`
-- Service module architecture (`server/social-media.ts`) for easy platform expansion
-- Share dialog UI with platform selection checkboxes
-- Real-time feedback on posting success/failure with toast notifications
-- Post history tracking in `social_media_posts` table
-- Platform-specific settings in `social_media_settings` table
-
-**Admin Portal & Content Management System:**
-- Implemented comprehensive admin portal with role-based access control (admin, staff, volunteer, donor)
-- Session-based authentication using express-session with bcrypt password hashing
-- Admin dashboard at `/admin` with real-time statistics and analytics
-- Modular admin pages for managing:
-  - Contact submissions (view, delete)
-  - Volunteer applications (view, delete)
-  - Testimonials (approve/unapprove, delete)
-  - News articles (create, edit, publish, delete with WYSIWYG editing)
-  - Events (create, edit, publish, delete with date/location management)
-  - Newsletter subscribers (view all subscriptions)
-  - Impact metrics (create, update metrics)
-  - User management (admin-only access)
-- Created reusable AdminLayout component with sidebar navigation
-- Login page at `/login` with secure authentication
-- Default admin user: username=admin, password=admin123
-
-**Dynamic Content Management:**
-- Extended database schema with 9 new tables:
-  - `newsletter_subscribers` - Email subscriptions with timestamps
-  - `news_articles` - Dynamic news with slug, content, publish status, featured images
-  - `events` - Event management with date/time, location, registration URLs
-  - `documents` - Downloadable resources with categories and access control
-  - `program_registrations` - Event/program registration tracking
-  - `settings` - Site-wide configuration management
-  - `recurring_donations` - Recurring payment tracking
-  - `social_media_settings` - Platform configuration and auto-post settings
-  - `social_media_posts` - Social media posting history and logs
-- All tables support publish/draft workflow for controlled content release
-
-**Public-Facing Features:**
-- Newsletter subscription form integrated in footer with real-time feedback
-- Testimonial submission form on `/testimonials` page with approval workflow
-- Public API endpoints for:
-  - Newsletter subscription (POST `/api/newsletter`)
-  - Testimonial submission (POST `/api/testimonials`)
-  - Published news articles (GET `/api/news`)
-  - Published events (GET `/api/events`)
-  - Published documents (GET `/api/documents`)
-  - Impact metrics (GET `/api/metrics`)
-
-**Architecture & Security:**
-- Modular backend architecture:
-  - `server/auth.ts` - Authentication utilities and middleware
-  - `server/admin-routes.ts` - Protected admin endpoints
-  - `server/routes.ts` - Public and auth routes
-  - `server/social-media.ts` - Social media posting service module
-- Middleware protection for admin routes (requireAuth, requireAdminOrStaff, requireAdmin)
-- Frontend AuthContext for global authentication state
-- ProtectedRoute component for route-level access control
-- Session storage using PostgreSQL via connect-pg-simple
-- Environment-based secrets management for external API credentials
-
-**Technical Implementation:**
-- Storage layer extended with 36+ CRUD methods in IStorage interface
-- Type-safe API with Zod validation for all data operations
-- Frontend admin components with data tables, forms, and dialogs
-- Real-time cache invalidation using TanStack Query
-- Comprehensive test coverage including e2e admin portal testing
-- Impact Metrics Dashboard: Homepage displays real-time metrics from database
-- Social media service with platform-agnostic posting interface
-- Rich Text Editor (TipTap) for News and Events content creation
-- Share functionality with multi-platform selection UI
-
-**Email Integration Note:**
-- User dismissed Resend integration setup
-- For future email notifications (donation confirmations, volunteer applications, contact auto-responder), will need to either:
-  1. Set up Resend/SendGrid integration with API keys as secrets, OR
-  2. Use alternative email service with manual API key configuration
-
-**Previous Changes (January 2025):**
-
-**Theme & Color Scheme:**
-- Restored primary color to orange (hsl(25, 95%, 53%)) from white
-- Maintained secondary color as blue (hsl(221, 68%, 40%))
-- Implemented dark/light theme toggle with localStorage persistence
-- Added theme toggle buttons in navigation (desktop and mobile) with accessibility labels
-- Complete dark mode color palette professionally balanced with proper contrast:
-  - Dark background: hsl(215, 25%, 10%)
-  - Dark cards: hsl(215, 25%, 12%)
-  - Light text: hsl(0, 0%, 98%)
-  - Enhanced shadows and gradients for dark mode
-- Footer fully optimized for both themes with proper text contrast
-- All buttons, links, and interactive elements maintain accessibility in both modes
-
-**Leadership Section:**
-- Added "Our Leadership" section to About page
-- Displays 6 leadership team members with individual details:
-  - Executive Director: Samuel K. Johnson
-  - Program Director: Mary T. Williams
-  - Finance Director: James B. Cooper
-  - Community Outreach Coordinator: Grace M. Harris
-  - Youth Engagement Manager: Emmanuel D. Roberts
-  - Education & Training Specialist: Linda S. Thompson
-- Each leader card includes profile image, name, position, bio, and email contact
-- Responsive 3-column grid layout with hover animations
-
-**Legal Pages:**
-- Added three comprehensive legal pages accessible from footer:
-  - Privacy Policy (`/privacy-policy`) - 11 sections covering data collection, usage, sharing, security, user rights, and compliance
-  - Terms of Service (`/terms-of-service`) - 14 sections including donation policy, volunteer agreements, IP rights, disclaimers, and governing law
-  - Cookie Policy (`/cookie-policy`) - 10 sections with detailed cookie information, types table, and browser management instructions
-- All pages feature consistent card-based layout with proper SEO metadata
-- Full dark/light theme support with accessible contrast
-- Footer links updated to route to actual legal pages using wouter Link components
-- All interactive elements have data-testid attributes for testing
+This project is a professional website for the Movement for Change and Empowering Future Leaders (MCEFL), a Liberian NGO. Its primary purpose is to empower youth, develop leadership, and provide community support. The platform informs about programs, facilitates volunteer applications, processes donations via Stripe, and showcases testimonials. It's built as a modern full-stack web application with a React frontend and an Express backend. The project aims to enhance MCEFL's online presence, streamline operations, and support fundraising efforts.
 
 ## User Preferences
 
@@ -182,90 +13,69 @@ Preferred communication style: Simple, everyday language.
 ### Frontend Architecture
 
 **Technology Stack:**
-- React 18 with TypeScript for type-safe component development
-- Vite as the build tool and development server for fast HMR
-- Wouter for lightweight client-side routing
-- TanStack Query (React Query) for server state management and caching
-- React Hook Form with Zod validation for form handling
-- Shadcn UI component library built on Radix UI primitives
-- Tailwind CSS for utility-first styling with custom design tokens
+- **React 18 with TypeScript:** For type-safe component development.
+- **Vite:** As the build tool and development server.
+- **Wouter:** For lightweight client-side routing.
+- **TanStack Query (React Query):** For server state management and caching.
+- **React Hook Form with Zod validation:** For form handling.
+- **Shadcn UI built on Radix UI primitives:** For a modern component library.
+- **Tailwind CSS:** For utility-first styling.
 
 **Design Decisions:**
-- Single Page Application (SPA) architecture with client-side routing
-- Component-based architecture with reusable UI components in `/client/src/components/ui`
-- Custom design system with CSS variables for theming (primary, secondary, accent colors)
-- **Dark/Light Theme Support:** Global ThemeProvider with localStorage persistence, theme toggle in navigation
-- Mobile-first responsive design approach
-- Organized page structure: Home, About, Programs, Get Involved, Testimonials, News & Events, Contact, Donate, Program Details, Partnerships, Share Donation, Gallery, News Archive
+- **Single Page Application (SPA):** With client-side routing.
+- **Component-based architecture:** With reusable UI components.
+- **Custom design system:** Using CSS variables for theming.
+- **Dark/Light Theme Support:** Global ThemeProvider with localStorage persistence and a theme toggle.
+- **Mobile-first responsive design.**
+- **Comprehensive navigation:** Including a dynamic "Programs" dropdown menu with accessibility features.
+- **SEO Optimization:** Using `react-helmet` for meta tags, OpenGraph, and Twitter cards.
+- **UI/UX Decisions:** Orange (hsl(25, 95%, 53%)) as primary color, blue (hsl(221, 68%, 40%)) as secondary.
 
 ### Backend Architecture
 
 **Technology Stack:**
-- Express.js server with TypeScript
-- PostgreSQL database via Neon serverless with WebSocket support
-- Drizzle ORM for type-safe database operations
-- Stripe integration for payment processing
+- **Express.js with TypeScript:** For the server.
+- **PostgreSQL via Neon serverless:** For the database.
+- **Drizzle ORM:** For type-safe database operations.
+- **Stripe:** For payment processing.
 
 **API Structure:**
-- RESTful API endpoints under `/api` prefix
-- Contact submissions: POST/GET `/api/contact`
-- Volunteer applications: POST/GET `/api/volunteer`
-- Donation processing: POST `/api/donate/create-payment-intent`, POST `/api/donate/webhook`
-- Testimonials: GET `/api/testimonials`
+- **RESTful API endpoints:** Under the `/api` prefix for contact, volunteer applications, donations, testimonials, news, events, documents, and impact metrics.
 
-**Architecture Decisions:**
-- Storage abstraction layer (`IStorage` interface) for database operations, enabling easy swapping of database implementations
-- Request logging middleware that captures method, path, status, duration, and response body for API routes
-- Raw body preservation for Stripe webhook signature verification
-- Environment-based configuration for development vs production builds
+**System Design Choices:**
+- **Modular backend architecture:** Separating authentication, admin, public routes, and social media services.
+- **Storage abstraction layer (IStorage interface):** For database operations flexibility.
+- **Middleware protection:** For admin and protected routes (e.g., `requireAuth`, `requireAdmin`).
+- **Session-based authentication:** Using `express-session` with `bcrypt`.
+- **Environment-based configuration:** For development vs. production settings.
+- **Dynamic Content Management:** Extended database schema with tables for newsletter subscribers, news articles, events, documents, program registrations, site settings, recurring donations, and social media management.
+- **Admin Portal:** Comprehensive role-based access control (admin, staff, volunteer, donor) for managing contact submissions, volunteer applications, testimonials, news, events, newsletter subscribers, impact metrics, and users.
+- **Social Media Integration:** Automated and manual posting for News and Events to Facebook, Twitter (X), and LinkedIn, managed via an admin panel.
 
 ### Data Storage
 
 **Database Schema (Drizzle ORM with PostgreSQL):**
+- **Core tables:** `users`, `contact_submissions`, `volunteer_applications`, `donations`, `testimonials`.
+- **Extended tables:** `newsletter_subscribers`, `news_articles`, `events`, `documents`, `program_registrations`, `settings`, `recurring_donations`, `social_media_settings`, `social_media_posts`.
+- **Design Decisions:** UUID primary keys, Zod schemas for runtime validation, type safety for insert/select operations, timestamp tracking.
 
-Tables:
-- `users` - Basic user authentication (username, password)
-- `contact_submissions` - Contact form data with timestamps
-- `volunteer_applications` - Volunteer signup information (name, email, phone, skills, availability)
-- `donations` - Payment tracking with Stripe integration (amount, currency, donor info, payment intent ID, status, type)
-- `testimonials` - User testimonials with approval workflow (name, role, content, rating, approval status)
-
-**Design Decisions:**
-- UUID primary keys for all tables using PostgreSQL's `gen_random_uuid()`
-- Zod schemas for runtime validation matching database schema
-- Separation of insert and select types for type safety
-- Timestamp tracking on submissions for auditing
-
-### External Dependencies
+## External Dependencies
 
 **Third-Party Services:**
-- **Stripe** - Payment processing for donations
-  - Stripe.js and React Stripe.js for frontend payment elements
-  - Stripe webhooks for payment confirmation
-  - Support for both general donations and child sponsorship
-  
-- **Neon Database** - Serverless PostgreSQL database
-  - WebSocket connections for serverless compatibility
-  - Connection pooling via `@neondatabase/serverless`
+- **Stripe:** Payment processing for donations (Stripe.js, React Stripe.js, webhooks).
+- **Neon Database:** Serverless PostgreSQL database (`@neondatabase/serverless`).
+- **Resend/SendGrid (Future consideration):** For email notifications.
 
 **Development Tools:**
-- **Replit Plugins** - Development environment enhancements
-  - Cartographer for code navigation
-  - Runtime error overlay for debugging
-  - Dev banner for development mode indication
+- **Replit Plugins:** Cartographer, Runtime error overlay, Dev banner.
 
-**UI Component Library:**
-- **Radix UI** - Comprehensive set of accessible, unstyled primitives (accordion, dialog, dropdown, form controls, etc.)
-- **Shadcn UI** - Pre-styled components built on Radix UI with Tailwind CSS
-- **Lucide React** - Icon library for UI elements
-
-**Styling & Utilities:**
-- Font Awesome for social media and decorative icons
-- Google Fonts (Inter, Roboto, Poppins) for typography
-- class-variance-authority (CVA) for component variant management
-- clsx and tailwind-merge for conditional class composition
-
-**Form Management:**
-- React Hook Form for performant form state management
-- Hookform resolvers for Zod schema integration
-- Date-fns for date formatting in forms and displays
+**UI Component Libraries & Utilities:**
+- **Radix UI:** Accessible, unstyled primitives.
+- **Shadcn UI:** Pre-styled components built on Radix UI with Tailwind CSS.
+- **Lucide React:** Icon library.
+- **Font Awesome:** For social media and decorative icons.
+- **Google Fonts:** (Inter, Roboto, Poppins) for typography.
+- **class-variance-authority (CVA):** For component variant management.
+- **clsx and tailwind-merge:** For conditional class composition.
+- **Date-fns:** For date formatting.
+- **TipTap:** Rich Text Editor for content creation.
