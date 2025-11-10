@@ -102,18 +102,27 @@ export default function Navigation() {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`font-medium transition-colors hover:text-primary ${
-                  isActive(item.href) ? 'text-primary' : 'text-foreground'
-                }`}
-                data-testid={`nav-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {/* Home */}
+            <Link
+              href="/"
+              className={`font-medium transition-colors hover:text-primary ${
+                isActive("/") ? 'text-primary' : 'text-foreground'
+              }`}
+              data-testid="nav-home"
+            >
+              Home
+            </Link>
+
+            {/* About Us */}
+            <Link
+              href="/about"
+              className={`font-medium transition-colors hover:text-primary ${
+                isActive("/about") ? 'text-primary' : 'text-foreground'
+              }`}
+              data-testid="nav-about-us"
+            >
+              About Us
+            </Link>
             
             {/* Programs Dropdown */}
             <NavigationMenu>
@@ -124,6 +133,7 @@ export default function Navigation() {
                       location.startsWith('/programs') ? 'text-primary' : 'text-foreground'
                     }`}
                     data-testid="nav-programs-dropdown"
+                    aria-current={location.startsWith('/programs') ? 'page' : undefined}
                   >
                     Programs
                   </NavigationMenuTrigger>
@@ -157,6 +167,20 @@ export default function Navigation() {
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
+
+            {/* Remaining Navigation Items */}
+            {navItems.slice(2).map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`font-medium transition-colors hover:text-primary ${
+                  isActive(item.href) ? 'text-primary' : 'text-foreground'
+                }`}
+                data-testid={`nav-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
+              >
+                {item.label}
+              </Link>
+            ))}
 
             <Button
               variant="ghost"
@@ -203,19 +227,29 @@ export default function Navigation() {
               </SheetTrigger>
               <SheetContent side="right" className="w-full max-w-sm">
                 <div className="flex flex-col space-y-4 mt-8">
-                  {navItems.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={`font-medium py-2 border-b border-border transition-colors hover:text-primary ${
-                        isActive(item.href) ? 'text-primary' : 'text-foreground'
-                      }`}
-                      onClick={() => setIsOpen(false)}
-                      data-testid={`mobile-nav-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
+                  {/* Home */}
+                  <Link
+                    href="/"
+                    className={`font-medium py-2 border-b border-border transition-colors hover:text-primary ${
+                      isActive("/") ? 'text-primary' : 'text-foreground'
+                    }`}
+                    onClick={() => setIsOpen(false)}
+                    data-testid="mobile-nav-home"
+                  >
+                    Home
+                  </Link>
+
+                  {/* About Us */}
+                  <Link
+                    href="/about"
+                    className={`font-medium py-2 border-b border-border transition-colors hover:text-primary ${
+                      isActive("/about") ? 'text-primary' : 'text-foreground'
+                    }`}
+                    onClick={() => setIsOpen(false)}
+                    data-testid="mobile-nav-about-us"
+                  >
+                    About Us
+                  </Link>
                   
                   {/* Programs Accordion for Mobile */}
                   <Accordion type="single" collapsible className="border-b border-border">
@@ -225,6 +259,7 @@ export default function Navigation() {
                           location.startsWith('/programs') ? 'text-primary' : 'text-foreground'
                         }`}
                         data-testid="mobile-nav-programs"
+                        aria-current={location.startsWith('/programs') ? 'page' : undefined}
                       >
                         Programs
                       </AccordionTrigger>
@@ -248,6 +283,21 @@ export default function Navigation() {
                       </AccordionContent>
                     </AccordionItem>
                   </Accordion>
+
+                  {/* Remaining Navigation Items */}
+                  {navItems.slice(2).map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={`font-medium py-2 border-b border-border transition-colors hover:text-primary ${
+                        isActive(item.href) ? 'text-primary' : 'text-foreground'
+                      }`}
+                      onClick={() => setIsOpen(false)}
+                      data-testid={`mobile-nav-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
 
                   <Link href="/donate" onClick={() => setIsOpen(false)}>
                     <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 mt-4" data-testid="mobile-donate-button">

@@ -8,12 +8,14 @@ This is a professional website for the Movement for Change and Empowering Future
 
 **Navigation Enhancement (November 10, 2025):**
 - Implemented Programs dropdown menu in main navigation
+  - **Positioned immediately after About Us menu** for optimal UX
   - Desktop: Hover-activated NavigationMenu with 2-column grid layout
   - Mobile: Accordion-based expandable menu in mobile Sheet
   - Shows all 6 programs with icons and descriptions
-  - Fully accessible with keyboard navigation support
-  - Active state indication when on Programs pages
+  - Fully accessible with keyboard navigation and `aria-current` attributes
+  - Active state indication (visual + ARIA) when on Programs pages
   - Links to individual program detail pages
+- Final navigation order: Home → About Us → **Programs** → Get Involved → Testimonials → News & Events → Contact
 
 **Deployment Readiness Improvements (October 10, 2025):**
 - Fixed duplicate `/api/metrics` API route conflict
