@@ -145,6 +145,34 @@ export const socialMediaPosts = pgTable("social_media_posts", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const tasks = pgTable("tasks", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  status: text("status").default("pending").notNull(), // 'pending', 'in-progress', 'completed', 'cancelled'
+  priority: text("priority").default("medium").notNull(), // 'low', 'medium', 'high', 'urgent'
+  assignedToId: varchar("assigned_to_id"), // User ID of staff member
+  assignedToName: text("assigned_to_name"), // Name of staff member for display
+  createdById: varchar("created_by_id").notNull(), // Admin user ID
+  createdByName: text("created_by_name").notNull(), // Admin name for display
+  dueDate: timestamp("due_date"),
+  completedAt: timestamp("completed_at"),
+  notes: text("notes"), // Additional notes or updates
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const websiteContent = pgTable("website_content", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  contentKey: text("content_key").notNull().unique(), // 'hero_title', 'hero_subtitle', 'mission_statement', etc.
+  contentValue: text("content_value").notNull(),
+  contentType: text("content_type").default("text").notNull(), // 'text', 'html', 'url'
+  section: text("section").notNull(), // 'homepage', 'about', 'programs', 'footer', etc.
+  label: text("label").notNull(), // Human-readable label for admin UI
+  description: text("description"), // Help text for admins
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
   createdAt: true,
@@ -213,6 +241,20 @@ export const insertSocialMediaPostSchema = createInsertSchema(socialMediaPosts).
   createdAt: true,
 });
 
+export const insertTaskSchema = createInsertSchema(tasks).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  completedAt: true,
+}).extend({
+  dueDate: z.string().or(z.date()).optional().transform((val) => val ? (typeof val === 'string' ? new Date(val) : val) : undefined),
+});
+
+export const insertWebsiteContentSchema = createInsertSchema(websiteContent).omit({
+  id: true,
+  updatedAt: true,
+});
+
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type ContactSubmission = typeof contactSubmissions.$inferSelect;
@@ -239,3 +281,7 @@ export type ProgramRegistration = typeof programRegistrations.$inferSelect;
 export type InsertProgramRegistration = z.infer<typeof insertProgramRegistrationSchema>;
 export type ImpactMetric = typeof impactMetrics.$inferSelect;
 export type InsertImpactMetric = z.infer<typeof insertImpactMetricSchema>;
+export type Task = typeof tasks.$inferSelect;
+export type InsertTask = z.infer<typeof insertTaskSchema>;
+export type WebsiteContent = typeof websiteContent.$inferSelect;
+export type InsertWebsiteContent = z.infer<typeof insertWebsiteContentSchema>;

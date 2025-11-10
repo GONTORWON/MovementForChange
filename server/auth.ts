@@ -72,6 +72,20 @@ export function requireAdmin(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
+// Middleware to check if user has staff role (or higher)
+export function requireStaff(req: Request, res: Response, next: NextFunction) {
+  if (!req.session || !req.session.userId) {
+    return res.status(401).json({ message: 'Authentication required' });
+  }
+
+  const userRole = req.session.userRole;
+  if (userRole !== 'admin' && userRole !== 'staff') {
+    return res.status(403).json({ message: 'Access denied. Staff privileges required.' });
+  }
+
+  next();
+}
+
 // Extend Express Session type
 declare module 'express-session' {
   interface SessionData {

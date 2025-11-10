@@ -1,7 +1,7 @@
 import { 
   users, contactSubmissions, volunteerApplications, donations, testimonials,
   newsArticles, events, newsletters, documents, programRegistrations, impactMetrics,
-  socialMediaSettings, socialMediaPosts,
+  socialMediaSettings, socialMediaPosts, tasks, websiteContent,
   type User, type InsertUser, type ContactSubmission, type InsertContactSubmission,
   type VolunteerApplication, type InsertVolunteerApplication,
   type Donation, type InsertDonation, type Testimonial, type InsertTestimonial,
@@ -10,7 +10,9 @@ import {
   type ProgramRegistration, type InsertProgramRegistration,
   type ImpactMetric, type InsertImpactMetric,
   type SocialMediaSetting, type InsertSocialMediaSetting,
-  type SocialMediaPost, type InsertSocialMediaPost
+  type SocialMediaPost, type InsertSocialMediaPost,
+  type Task, type InsertTask,
+  type WebsiteContent, type InsertWebsiteContent
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, sql } from "drizzle-orm";
@@ -90,6 +92,21 @@ export interface IStorage {
   createSocialMediaPost(post: InsertSocialMediaPost): Promise<SocialMediaPost>;
   getSocialMediaPosts(contentId?: string): Promise<SocialMediaPost[]>;
   updateSocialMediaPostStatus(id: string, status: string, postUrl?: string, platformPostId?: string, error?: string): Promise<SocialMediaPost | undefined>;
+
+  // Tasks
+  createTask(task: InsertTask): Promise<Task>;
+  getTasks(): Promise<Task[]>;
+  getTasksByUser(userId: string): Promise<Task[]>;
+  getTask(id: string): Promise<Task | undefined>;
+  updateTask(id: string, data: Partial<InsertTask>): Promise<Task | undefined>;
+  deleteTask(id: string): Promise<boolean>;
+
+  // Website Content
+  getWebsiteContent(): Promise<WebsiteContent[]>;
+  getWebsiteContentBySection(section: string): Promise<WebsiteContent[]>;
+  getWebsiteContentByKey(contentKey: string): Promise<WebsiteContent | undefined>;
+  updateWebsiteContent(id: string, data: Partial<InsertWebsiteContent>): Promise<WebsiteContent | undefined>;
+  upsertWebsiteContent(content: InsertWebsiteContent): Promise<WebsiteContent>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -409,6 +426,70 @@ export class DatabaseStorage implements IStorage {
 
     const [result] = await db.update(socialMediaPosts).set(updateData).where(eq(socialMediaPosts.id, id)).returning();
     return result || undefined;
+  }
+
+  // Tasks
+  async createTask(task: InsertTask): Promise<Task> {
+    const [result] = await db.insert(tasks).values(task).returning();
+    return result;
+  }
+
+  async getTasks(): Promise<Task[]> {
+    return await db.select().from(tasks).orderBy(desc(tasks.createdAt));
+  }
+
+  async getTasksByUser(userId: string): Promise<Task[]> {
+    return await db.select().from(tasks).where(eq(tasks.assignedToId, userId)).orderBy(desc(tasks.createdAt));
+  }
+
+  async getTask(id: string): Promise<Task | undefined> {
+    const [result] = await db.select().from(tasks).where(eq(tasks.id, id));
+    return result || undefined;
+  }
+
+  async updateTask(id: string, data: Partial<InsertTask>): Promise<Task | undefined> {
+    const updateData = { ...data, updatedAt: new Date() };
+    if (data.status === 'completed' && !data.completedAt) {
+      updateData.completedAt = new Date();
+    }
+    const [result] = await db.update(tasks).set(updateData).where(eq(tasks.id, id)).returning();
+    return result || undefined;
+  }
+
+  async deleteTask(id: string): Promise<boolean> {
+    const result = await db.delete(tasks).where(eq(tasks.id, id));
+    return result.rowCount !== null && result.rowCount > 0;
+  }
+
+  // Website Content
+  async getWebsiteContent(): Promise<WebsiteContent[]> {
+    return await db.select().from(websiteContent).orderBy(websiteContent.section, websiteContent.label);
+  }
+
+  async getWebsiteContentBySection(section: string): Promise<WebsiteContent[]> {
+    return await db.select().from(websiteContent).where(eq(websiteContent.section, section));
+  }
+
+  async getWebsiteContentByKey(contentKey: string): Promise<WebsiteContent | undefined> {
+    const [result] = await db.select().from(websiteContent).where(eq(websiteContent.contentKey, contentKey));
+    return result || undefined;
+  }
+
+  async updateWebsiteContent(id: string, data: Partial<InsertWebsiteContent>): Promise<WebsiteContent | undefined> {
+    const [result] = await db.update(websiteContent).set({ ...data, updatedAt: new Date() }).where(eq(websiteContent.id, id)).returning();
+    return result || undefined;
+  }
+
+  async upsertWebsiteContent(content: InsertWebsiteContent): Promise<WebsiteContent> {
+    const [result] = await db
+      .insert(websiteContent)
+      .values(content)
+      .onConflictDoUpdate({
+        target: websiteContent.contentKey,
+        set: { contentValue: content.contentValue, updatedAt: new Date() }
+      })
+      .returning();
+    return result;
   }
 }
 

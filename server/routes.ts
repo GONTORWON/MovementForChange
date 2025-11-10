@@ -2,9 +2,9 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import Stripe from "stripe";
 import { storage } from "./storage";
-import { authUtils, requireAuth, requireAdminOrStaff } from "./auth";
+import { authUtils, requireAuth, requireAdminOrStaff, requireStaff } from "./auth";
 import { setupAdminRoutes } from "./admin-routes";
-import { insertContactSubmissionSchema, insertVolunteerApplicationSchema, insertDonationSchema, insertTestimonialSchema, insertNewsletterSchema } from "@shared/schema";
+import { insertContactSubmissionSchema, insertVolunteerApplicationSchema, insertDonationSchema, insertTestimonialSchema, insertNewsletterSchema, insertTaskSchema } from "@shared/schema";
 
 if (!process.env.STRIPE_SECRET_KEY) {
   console.warn('STRIPE_SECRET_KEY not found in environment variables. Donation functionality will be limited.');
@@ -84,8 +84,96 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Password change route for all authenticated users
+  app.post("/api/auth/change-password", requireAuth, async (req, res) => {
+    try {
+      const { currentPassword, newPassword } = req.body;
+      
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({ message: "Current password and new password required" });
+      }
+
+      if (newPassword.length < 6) {
+        return res.status(400).json({ message: "Password must be at least 6 characters" });
+      }
+
+      const user = await storage.getUser(req.session.userId!);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const isValid = await authUtils.verifyPassword(currentPassword, user.password);
+      if (!isValid) {
+        return res.status(401).json({ message: "Current password is incorrect" });
+      }
+
+      const hashedPassword = await authUtils.hashPassword(newPassword);
+      await storage.updateUser(user.id, { password: hashedPassword });
+
+      res.json({ success: true, message: "Password changed successfully" });
+    } catch (error: any) {
+      res.status(500).json({ message: "Error changing password: " + error.message });
+    }
+  });
+
   // Setup admin routes
   setupAdminRoutes(app);
+
+  // ===== STAFF ROUTES =====
+  app.get("/api/staff/tasks", requireStaff, async (req, res) => {
+    try {
+      const tasks = await storage.getTasksByUser(req.session.userId!);
+      res.json(tasks);
+    } catch (error: any) {
+      res.status(500).json({ message: "Error fetching tasks: " + error.message });
+    }
+  });
+
+  app.get("/api/staff/tasks/:id", requireStaff, async (req, res) => {
+    try {
+      const task = await storage.getTask(req.params.id);
+      if (!task) {
+        return res.status(404).json({ message: "Task not found" });
+      }
+      // Verify the task is assigned to the current user
+      if (task.assignedToId !== req.session.userId && req.session.userRole !== 'admin') {
+        return res.status(403).json({ message: "Access denied. This task is not assigned to you." });
+      }
+      res.json(task);
+    } catch (error: any) {
+      res.status(500).json({ message: "Error fetching task: " + error.message });
+    }
+  });
+
+  app.patch("/api/staff/tasks/:id", requireStaff, async (req, res) => {
+    try {
+      const task = await storage.getTask(req.params.id);
+      if (!task) {
+        return res.status(404).json({ message: "Task not found" });
+      }
+      // Verify the task is assigned to the current user
+      if (task.assignedToId !== req.session.userId && req.session.userRole !== 'admin') {
+        return res.status(403).json({ message: "Access denied. This task is not assigned to you." });
+      }
+
+      // Staff can only update status and notes - filter and validate
+      const allowedFields = ['status', 'notes'];
+      const filteredData = Object.keys(req.body)
+        .filter(key => allowedFields.includes(key))
+        .reduce((obj: any, key) => {
+          obj[key] = req.body[key];
+          return obj;
+        }, {});
+
+      // Validate with Zod partial schema (only status and notes)
+      const updateData = insertTaskSchema.pick({ status: true, notes: true }).partial().parse(filteredData);
+
+      const updatedTask = await storage.updateTask(req.params.id, updateData);
+      res.json(updatedTask);
+    } catch (error: any) {
+      res.status(400).json({ message: "Error updating task: " + error.message });
+    }
+  });
 
   // ===== PUBLIC API ROUTES =====
 

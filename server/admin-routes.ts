@@ -4,7 +4,8 @@ import { requireAdminOrStaff, requireAdmin } from "./auth";
 import { socialMediaService } from "./social-media";
 import { 
   insertNewsArticleSchema, insertEventSchema, insertNewsletterSchema,
-  insertDocumentSchema, insertImpactMetricSchema, insertSocialMediaSettingSchema 
+  insertDocumentSchema, insertImpactMetricSchema, insertSocialMediaSettingSchema,
+  insertTaskSchema, insertWebsiteContentSchema
 } from "@shared/schema";
 
 export function setupAdminRoutes(app: Express) {
@@ -526,6 +527,139 @@ export function setupAdminRoutes(app: Express) {
       res.json(posts);
     } catch (error: any) {
       res.status(500).json({ message: "Error fetching posts: " + error.message });
+    }
+  });
+
+  // ===== TASK MANAGEMENT =====
+  app.post("/api/admin/tasks", requireAdmin, async (req, res) => {
+    try {
+      // Get creator info from session (don't trust client)
+      const creator = await storage.getUser(req.session.userId!);
+      if (!creator) {
+        return res.status(401).json({ message: "User not found" });
+      }
+
+      const validatedData = insertTaskSchema.parse(req.body);
+      
+      // Server-side set createdBy fields from session
+      const taskData = {
+        ...validatedData,
+        createdById: creator.id,
+        createdByName: creator.fullName || creator.username,
+      };
+
+      const task = await storage.createTask(taskData);
+      res.status(201).json(task);
+    } catch (error: any) {
+      res.status(400).json({ message: "Error creating task: " + error.message });
+    }
+  });
+
+  app.get("/api/admin/tasks", requireAdminOrStaff, async (req, res) => {
+    try {
+      const tasks = await storage.getTasks();
+      res.json(tasks);
+    } catch (error: any) {
+      res.status(500).json({ message: "Error fetching tasks: " + error.message });
+    }
+  });
+
+  app.get("/api/admin/tasks/:id", requireAdminOrStaff, async (req, res) => {
+    try {
+      const task = await storage.getTask(req.params.id);
+      if (!task) {
+        return res.status(404).json({ message: "Task not found" });
+      }
+      res.json(task);
+    } catch (error: any) {
+      res.status(500).json({ message: "Error fetching task: " + error.message });
+    }
+  });
+
+  app.patch("/api/admin/tasks/:id", requireAdmin, async (req, res) => {
+    try {
+      // Validate and restrict editable fields
+      const allowedFields = ['title', 'description', 'status', 'priority', 'assignedToId', 'assignedToName', 'dueDate', 'notes'];
+      const filteredData = Object.keys(req.body)
+        .filter(key => allowedFields.includes(key))
+        .reduce((obj: any, key) => {
+          obj[key] = req.body[key];
+          return obj;
+        }, {});
+
+      // Validate with Zod partial schema
+      const updateData = insertTaskSchema.partial().parse(filteredData);
+
+      const task = await storage.updateTask(req.params.id, updateData);
+      if (!task) {
+        return res.status(404).json({ message: "Task not found" });
+      }
+      res.json(task);
+    } catch (error: any) {
+      res.status(400).json({ message: "Error updating task: " + error.message });
+    }
+  });
+
+  app.delete("/api/admin/tasks/:id", requireAdmin, async (req, res) => {
+    try {
+      const success = await storage.deleteTask(req.params.id);
+      if (!success) {
+        return res.status(404).json({ message: "Task not found" });
+      }
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ message: "Error deleting task: " + error.message });
+    }
+  });
+
+  // ===== WEBSITE CONTENT MANAGEMENT =====
+  app.get("/api/admin/content", requireAdminOrStaff, async (req, res) => {
+    try {
+      const section = req.query.section as string | undefined;
+      const content = section 
+        ? await storage.getWebsiteContentBySection(section)
+        : await storage.getWebsiteContent();
+      res.json(content);
+    } catch (error: any) {
+      res.status(500).json({ message: "Error fetching content: " + error.message });
+    }
+  });
+
+  app.patch("/api/admin/content/:id", requireAdmin, async (req, res) => {
+    try {
+      // Validate and restrict editable fields - only allow contentValue updates
+      const allowedFields = ['contentValue'];
+      const filteredData = Object.keys(req.body)
+        .filter(key => allowedFields.includes(key))
+        .reduce((obj: any, key) => {
+          obj[key] = req.body[key];
+          return obj;
+        }, {});
+
+      // Validate with Zod partial schema
+      const updateData = insertWebsiteContentSchema.partial().parse(filteredData);
+
+      if (!updateData.contentValue) {
+        return res.status(400).json({ message: "contentValue is required" });
+      }
+
+      const content = await storage.updateWebsiteContent(req.params.id, updateData);
+      if (!content) {
+        return res.status(404).json({ message: "Content not found" });
+      }
+      res.json(content);
+    } catch (error: any) {
+      res.status(400).json({ message: "Error updating content: " + error.message });
+    }
+  });
+
+  app.post("/api/admin/content", requireAdmin, async (req, res) => {
+    try {
+      const validatedData = insertWebsiteContentSchema.parse(req.body);
+      const content = await storage.upsertWebsiteContent(validatedData);
+      res.json(content);
+    } catch (error: any) {
+      res.status(400).json({ message: "Error upserting content: " + error.message });
     }
   });
 }
