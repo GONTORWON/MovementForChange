@@ -21,12 +21,29 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      await login(username, password);
-      toast({
-        title: "Login successful",
-        description: "Welcome to the admin portal",
-      });
-      navigate("/admin");
+      const user = await login(username, password);
+      
+      // Role-based redirect and messaging
+      if (user.role === 'admin') {
+        toast({
+          title: "Login successful",
+          description: "Welcome to the admin portal",
+        });
+        navigate("/admin");
+      } else if (user.role === 'staff') {
+        toast({
+          title: "Login successful",
+          description: "Welcome back! View your assigned tasks",
+        });
+        navigate("/staff/dashboard");
+      } else {
+        // Volunteers, donors, or other roles go to homepage
+        toast({
+          title: "Login successful",
+          description: "Welcome back to MCEFL",
+        });
+        navigate("/");
+      }
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -42,9 +59,9 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 dark:from-primary/5 dark:to-secondary/5 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Admin Portal</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">MCEFL Portal</CardTitle>
           <CardDescription className="text-center">
-            Sign in to access the MCEFL admin dashboard
+            Sign in to access your dashboard
           </CardDescription>
         </CardHeader>
         <CardContent>

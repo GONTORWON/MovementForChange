@@ -1,9 +1,10 @@
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/lib/AuthContext";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, FileText, Calendar, Mail, Settings, LogOut, Heart, MessageSquare, BarChart, Menu, Home, Share2, DollarSign, CheckSquare, Globe } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Calendar, Mail, Settings, LogOut, Heart, MessageSquare, BarChart, Menu, Home, Share2, DollarSign, CheckSquare, Globe, Lock } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
+import { ChangePasswordDialog } from "@/components/ChangePasswordDialog";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -84,6 +85,18 @@ export default function AdminLayout({ children, title, description }: AdminLayou
               </Button>
             ))}
             <Separator className="my-3" />
+            <ChangePasswordDialog
+              trigger={
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start mb-1"
+                  data-testid="button-change-password"
+                >
+                  <Lock className="mr-2 h-4 w-4" />
+                  Change Password
+                </Button>
+              }
+            />
             <Button
               variant="ghost"
               className="w-full justify-start text-destructive hover:text-destructive"

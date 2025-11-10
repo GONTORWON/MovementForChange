@@ -38,6 +38,7 @@ import AdminDocuments from "@/pages/AdminDocuments";
 import AdminDonations from "@/pages/AdminDonations";
 import AdminTasks from "@/pages/AdminTasks";
 import AdminContent from "@/pages/AdminContent";
+import StaffDashboard from "@/pages/StaffDashboard";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -115,6 +116,13 @@ function Router() {
       <Route path="/admin/content">
         <ProtectedRoute requiredRole="admin">
           <AdminContent />
+        </ProtectedRoute>
+      </Route>
+
+      {/* Staff Routes */}
+      <Route path="/staff/dashboard">
+        <ProtectedRoute requiredRole="staff">
+          <StaffDashboard />
         </ProtectedRoute>
       </Route>
 
