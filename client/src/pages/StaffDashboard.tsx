@@ -53,7 +53,7 @@ export default function StaffDashboard() {
 
   const updateTaskMutation = useMutation({
     mutationFn: async (data: { taskId: string; status?: string; notes?: string }) => {
-      return await apiRequest(`/api/staff/tasks/${data.taskId}`, "PATCH", {
+      return await apiRequest("PATCH", `/api/staff/tasks/${data.taskId}`, {
         status: data.status,
         notes: data.notes,
       });

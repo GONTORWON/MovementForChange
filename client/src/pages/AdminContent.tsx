@@ -73,9 +73,8 @@ export default function AdminContent() {
 
   const updateContentMutation = useMutation({
     mutationFn: async (data: { id: string; contentValue: string }) => {
-      return await apiRequest(`/api/admin/content/${data.id}`, {
-        method: "PATCH",
-        body: JSON.stringify({ contentValue: data.contentValue }),
+      return await apiRequest("PATCH", `/api/admin/content/${data.id}`, {
+        contentValue: data.contentValue,
       });
     },
     onSuccess: () => {
