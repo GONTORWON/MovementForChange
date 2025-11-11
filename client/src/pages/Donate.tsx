@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocation, Link } from "wouter";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { Copy, Check } from "lucide-react";
 
 // Load Stripe outside of component
 const stripeKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
@@ -235,6 +236,117 @@ function DonationForm({ type, onPayment }: DonationFormProps) {
         Proceed to Payment - ${finalAmount.toFixed(2)}
       </Button>
     </form>
+  );
+}
+
+function BankTransferInfo() {
+  const { toast } = useToast();
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  interface BankDetail {
+    contentKey: string;
+    contentValue: string;
+    label: string;
+  }
+
+  const { data: bankDetails = [] } = useQuery<BankDetail[]>({
+    queryKey: ["/api/content", { section: "donate" }],
+    queryFn: async () => {
+      const response = await fetch("/api/content?section=donate");
+      if (!response.ok) throw new Error("Failed to fetch content");
+      return response.json();
+    },
+    select: (data: any[]) => 
+      data.map((item) => ({
+        contentKey: item.contentKey,
+        contentValue: item.contentValue,
+        label: item.label,
+      })),
+  });
+
+  const copyToClipboard = async (text: string, fieldName: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedField(fieldName);
+      toast({
+        title: "Copied!",
+        description: `${fieldName} copied to clipboard`,
+      });
+      setTimeout(() => setCopiedField(null), 2000);
+    } catch (err) {
+      toast({
+        title: "Copy Failed",
+        description: "Please copy manually",
+        variant: "destructive",
+      });
+    }
+  };
+
+  if (bankDetails.length === 0) return null;
+
+  return (
+    <Card className="shadow-lg border border-border mt-8" data-testid="bank-transfer-card">
+      <CardContent className="p-8">
+        <div className="flex items-start gap-3 mb-6">
+          <i className="fas fa-university text-primary text-2xl mt-1"></i>
+          <div>
+            <h3 className="font-heading font-bold text-xl text-foreground mb-2">
+              Bank Transfer / Wire Transfer
+            </h3>
+            <p className="text-muted-foreground">
+              You can also make a donation via direct bank transfer using the details below. 
+              After making your transfer, please email us at{" "}
+              <a href="mailto:movementforchangemcefl@gmail.com" className="text-primary hover:underline">
+                movementforchangemcefl@gmail.com
+              </a>{" "}
+              with your transaction details.
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-4 bg-muted/30 rounded-lg p-6">
+          {bankDetails.map((detail) => (
+            <div key={detail.contentKey} className="flex items-center justify-between gap-4">
+              <div className="flex-1">
+                <Label className="text-sm font-semibold text-muted-foreground mb-1 block">
+                  {detail.label}
+                </Label>
+                <p className="text-foreground font-mono text-sm break-all" data-testid={`bank-${detail.contentKey}`}>
+                  {detail.contentValue}
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => copyToClipboard(detail.contentValue, detail.label)}
+                className="flex-shrink-0"
+                data-testid={`copy-${detail.contentKey}`}
+              >
+                {copiedField === detail.label ? (
+                  <>
+                    <Check className="w-4 h-4 mr-1" />
+                    Copied
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4 mr-1" />
+                    Copy
+                  </>
+                )}
+              </Button>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+          <p className="text-sm text-blue-900 dark:text-blue-100">
+            <i className="fas fa-info-circle mr-2"></i>
+            <strong>Important:</strong> Please include your name and email in the transfer reference or 
+            notify us via email after completing the transfer so we can send you a receipt.
+          </p>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -479,6 +591,9 @@ export default function Donate() {
                 </Tabs>
               </CardContent>
             </Card>
+
+            {/* Bank Transfer Section */}
+            <BankTransferInfo />
           </div>
 
           {/* Impact Information */}

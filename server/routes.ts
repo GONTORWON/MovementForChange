@@ -401,6 +401,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get website content (public access for pages like donate, about, etc.)
+  app.get("/api/content", async (req, res) => {
+    try {
+      const section = req.query.section as string | undefined;
+      const content = section 
+        ? await storage.getWebsiteContentBySection(section)
+        : await storage.getWebsiteContent();
+      res.json(content);
+    } catch (error: any) {
+      res.status(500).json({ message: "Error fetching content: " + error.message });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;
