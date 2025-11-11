@@ -32,6 +32,7 @@ Preferred communication style: Simple, everyday language.
 - **UI/UX Decisions:** Orange (hsl(25, 95%, 53%)) as primary color, blue (hsl(221, 68%, 40%)) as secondary.
 - **Role-Based Access:** Separate admin portal (/admin/*) and staff dashboard (/staff/dashboard) with protected routes and role-based login redirects.
 - **Reusable Components:** ChangePasswordDialog component for secure password management across admin and staff interfaces.
+- **Payment Options:** Donate page offers both Stripe card payments and bank transfer/wire transfer options with copy-to-clipboard functionality for easy account detail sharing.
 
 ### Backend Architecture
 
@@ -43,6 +44,7 @@ Preferred communication style: Simple, everyday language.
 
 **API Structure:**
 - **RESTful API endpoints:** Under the `/api` prefix for contact, volunteer applications, donations, testimonials, news, events, documents, and impact metrics.
+- **Public Content API:** `/api/content` for reading website content (no authentication required) - used for donate page bank transfer details and other public content.
 - **Admin API endpoints:** `/api/admin/tasks` for task management (CRUD), `/api/admin/content` for website content editing, `/api/admin/users` for user management.
 - **Staff API endpoints:** `/api/staff/tasks` for viewing and updating assigned tasks.
 - **Authentication API:** `/api/auth/change-password` for user password changes.
