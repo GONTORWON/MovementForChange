@@ -225,8 +225,8 @@ export default function Navigation() {
                   <i className="fas fa-bars text-2xl"></i>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-full max-w-sm">
-                <div className="flex flex-col space-y-4 mt-8">
+              <SheetContent side="right" className="w-full max-w-sm overflow-y-auto">
+                <div className="flex flex-col space-y-4 mt-8 pb-8">
                   {/* Home */}
                   <Link
                     href="/"
