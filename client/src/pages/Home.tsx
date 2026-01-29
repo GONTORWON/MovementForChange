@@ -33,7 +33,7 @@ export default function Home() {
     return () => clearInterval(timer);
   }, []);
 
-  const { data: metricsData } = useQuery({
+  const { data: metricsData } = useQuery<any>({
     queryKey: ["/api/metrics"],
   });
 
@@ -59,7 +59,7 @@ export default function Home() {
             <div
               key={index}
               className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                index === currentSlide ? "opacity-100" : "opacity-0"
+                index === currentSlide ? "opacity-100 scale-105" : "opacity-0 scale-100"
               }`}
             >
               {slide.type === "image" ? (
@@ -85,6 +85,20 @@ export default function Home() {
         </div>
         
         <div className="hero-overlay absolute inset-0 z-1" />
+        
+        {/* Slide Indicators */}
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+          {heroSlides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentSlide(index)}
+              className={`w-3 h-3 rounded-full transition-all ${
+                index === currentSlide ? "bg-primary w-8" : "bg-white/50"
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
           <div className="mb-8">
