@@ -1,6 +1,6 @@
 import type { Express } from "express";
 import { storage } from "./storage";
-import { requireAdminOrStaff, requireAdmin } from "./auth";
+import { requireAdminOrStaff, requireAdmin, requireSuperAdmin } from "./auth";
 import { socialMediaService } from "./social-media";
 import { 
   insertNewsArticleSchema, insertEventSchema, insertNewsletterSchema,
@@ -389,8 +389,8 @@ export function setupAdminRoutes(app: Express) {
     }
   });
 
-  // ===== USER MANAGEMENT (Admin Only) =====
-  app.get("/api/admin/users", requireAdmin, async (req, res) => {
+  // ===== USER MANAGEMENT (Super Admin Only) =====
+  app.get("/api/admin/users", requireSuperAdmin, async (req, res) => {
     try {
       const users = await storage.getAllUsers();
       // Remove passwords from response
@@ -401,7 +401,7 @@ export function setupAdminRoutes(app: Express) {
     }
   });
 
-  app.post("/api/admin/users", requireAdmin, async (req, res) => {
+  app.post("/api/admin/users", requireSuperAdmin, async (req, res) => {
     try {
       const { username, password, email, fullName, role } = req.body;
       
@@ -422,7 +422,7 @@ export function setupAdminRoutes(app: Express) {
     }
   });
 
-  app.patch("/api/admin/users/:id", requireAdmin, async (req, res) => {
+  app.patch("/api/admin/users/:id", requireSuperAdmin, async (req, res) => {
     try {
       const { password, ...data } = req.body;
       const result = await storage.updateUser(req.params.id, data);

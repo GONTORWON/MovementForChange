@@ -9,7 +9,7 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
   email: text("email"),
   fullName: text("full_name"),
-  role: text("role").default("volunteer").notNull(), // 'admin', 'staff', 'volunteer', 'donor'
+  role: text("role").default("volunteer").notNull(), // 'super_admin', 'admin', 'staff', 'volunteer', 'donor'
   isActive: boolean("is_active").default(true).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

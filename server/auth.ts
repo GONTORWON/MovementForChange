@@ -52,7 +52,7 @@ export function requireAdminOrStaff(req: Request, res: Response, next: NextFunct
   }
 
   const userRole = req.session.userRole;
-  if (userRole !== 'admin' && userRole !== 'staff') {
+  if (userRole !== 'super_admin' && userRole !== 'admin' && userRole !== 'staff') {
     return res.status(403).json({ message: 'Access denied. Admin or staff privileges required.' });
   }
 
@@ -65,8 +65,22 @@ export function requireAdmin(req: Request, res: Response, next: NextFunction) {
     return res.status(401).json({ message: 'Authentication required' });
   }
 
-  if (req.session.userRole !== 'admin') {
+  const userRole = req.session.userRole;
+  if (userRole !== 'super_admin' && userRole !== 'admin') {
     return res.status(403).json({ message: 'Access denied. Admin privileges required.' });
+  }
+
+  next();
+}
+
+// Middleware to check if user has super_admin role only
+export function requireSuperAdmin(req: Request, res: Response, next: NextFunction) {
+  if (!req.session || !req.session.userId) {
+    return res.status(401).json({ message: 'Authentication required' });
+  }
+
+  if (req.session.userRole !== 'super_admin') {
+    return res.status(403).json({ message: 'Access denied. Super Admin privileges required.' });
   }
 
   next();
@@ -79,7 +93,7 @@ export function requireStaff(req: Request, res: Response, next: NextFunction) {
   }
 
   const userRole = req.session.userRole;
-  if (userRole !== 'admin' && userRole !== 'staff') {
+  if (userRole !== 'super_admin' && userRole !== 'admin' && userRole !== 'staff') {
     return res.status(403).json({ message: 'Access denied. Staff privileges required.' });
   }
 

@@ -22,7 +22,7 @@ const createUserSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
   email: z.string().email("Invalid email address").optional(),
   fullName: z.string().optional(),
-  role: z.enum(["admin", "staff", "volunteer", "donor"]),
+  role: z.enum(["super_admin", "admin", "staff", "volunteer", "donor"]),
 });
 
 type CreateUserForm = z.infer<typeof createUserSchema>;
@@ -101,6 +101,7 @@ export default function AdminUsers() {
 
   const getRoleBadgeVariant = (role: string) => {
     switch (role) {
+      case "super_admin": return "destructive";
       case "admin": return "destructive";
       case "staff": return "default";
       case "volunteer": return "secondary";
@@ -293,6 +294,7 @@ export default function AdminUsers() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="super_admin">Super Admin</SelectItem>
                   <SelectItem value="admin">Admin</SelectItem>
                   <SelectItem value="staff">Staff</SelectItem>
                   <SelectItem value="volunteer">Volunteer</SelectItem>
