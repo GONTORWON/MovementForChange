@@ -1,10 +1,38 @@
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import SEO from "@/components/SEO";
 
+const heroSlides = [
+  {
+    type: "image",
+    url: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+    alt: "Children in community"
+  },
+  {
+    type: "image",
+    url: "https://images.unsplash.com/photo-1524062794001-02e1dd22b352?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+    alt: "Youth empowerment"
+  },
+  {
+    type: "video",
+    url: "https://assets.mixkit.co/videos/preview/mixkit-group-of-friends-walking-in-a-park-4433-large.mp4",
+    alt: "Community engagement video"
+  }
+];
+
 export default function Home() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 8000); // 8 seconds per slide
+    return () => clearInterval(timer);
+  }, []);
+
   const { data: metricsData } = useQuery({
     queryKey: ["/api/metrics"],
   });
@@ -24,14 +52,39 @@ export default function Home() {
         ogType="website"
       />
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center" data-testid="hero-section">
-        <div 
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')"
-          }}
-        />
-        <div className="hero-overlay absolute inset-0" />
+      <section className="relative min-h-screen flex items-center overflow-hidden" data-testid="hero-section">
+        {/* Slideshow background */}
+        <div className="absolute inset-0 z-0">
+          {heroSlides.map((slide, index) => (
+            <div
+              key={index}
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                index === currentSlide ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              {slide.type === "image" ? (
+                <div
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{ backgroundImage: `url('${slide.url}')` }}
+                  aria-label={slide.alt}
+                />
+              ) : (
+                <video
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="absolute inset-0 w-full h-full object-cover"
+                  aria-label={slide.alt}
+                >
+                  <source src={slide.url} type="video/mp4" />
+                </video>
+              )}
+            </div>
+          ))}
+        </div>
+        
+        <div className="hero-overlay absolute inset-0 z-1" />
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
           <div className="mb-8">
