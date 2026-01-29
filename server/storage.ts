@@ -448,8 +448,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateTask(id: string, data: Partial<InsertTask>): Promise<Task | undefined> {
-    const updateData = { ...data, updatedAt: new Date() };
-    if (data.status === 'completed' && !data.completedAt) {
+    const updateData: any = { ...data, updatedAt: new Date() };
+    if (data.status === 'completed') {
       updateData.completedAt = new Date();
     }
     const [result] = await db.update(tasks).set(updateData).where(eq(tasks.id, id)).returning();
