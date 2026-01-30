@@ -16,6 +16,24 @@ const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SEC
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
+  // ===== HEALTH CHECK =====
+  app.get("/api/health", async (_req, res) => {
+    try {
+      const testQuery = await storage.getContactSubmissions();
+      res.json({ 
+        status: "ok", 
+        database: "connected",
+        timestamp: new Date().toISOString()
+      });
+    } catch (error: any) {
+      res.status(500).json({ 
+        status: "error", 
+        database: "disconnected",
+        error: error.message 
+      });
+    }
+  });
+
   // ===== AUTH ROUTES =====
   app.post("/api/auth/login", async (req, res) => {
     try {
