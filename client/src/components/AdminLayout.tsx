@@ -35,11 +35,17 @@ export default function AdminLayout({ children, title, description }: AdminLayou
     { icon: Share2, label: "Social Media", path: "/admin/social-media" },
   ];
 
-  // Admin-only menu items
-  if (user?.role === 'admin') {
+  // Admin-only menu items (super_admin and admin can see these)
+  if (user?.role === 'super_admin' || user?.role === 'admin') {
     menuItems.push(
       { icon: CheckSquare, label: "Tasks", path: "/admin/tasks" },
       { icon: Globe, label: "Website Content", path: "/admin/content" },
+    );
+  }
+  
+  // Super Admin only - User Management
+  if (user?.role === 'super_admin') {
+    menuItems.push(
       { icon: Settings, label: "Users", path: "/admin/users" }
     );
   }

@@ -24,7 +24,7 @@ export default function Login() {
       const user = await login(username, password);
       
       // Role-based redirect and messaging
-      if (user.role === 'admin') {
+      if (user.role === 'super_admin' || user.role === 'admin') {
         toast({
           title: "Login successful",
           description: "Welcome to the admin portal",

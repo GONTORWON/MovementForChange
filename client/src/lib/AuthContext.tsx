@@ -83,7 +83,7 @@ export function useRequireAuth(requiredRole?: string) {
   }
   
   if (requiredRole) {
-    const hasAccess = user.role === 'admin' || (requiredRole === 'staff' && user.role === 'staff');
+    const hasAccess = user.role === 'super_admin' || user.role === 'admin' || (requiredRole === 'staff' && user.role === 'staff');
     return { user, isLoading: false, hasAccess };
   }
   
