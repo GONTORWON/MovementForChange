@@ -6,6 +6,8 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
+// ✅ REQUIRED for Render + HTTPS
+app.set("trust proxy", 1);
 
 // Session configuration
 const PgStore = connectPgSimple(session);
