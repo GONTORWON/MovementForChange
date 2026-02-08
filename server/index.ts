@@ -11,13 +11,13 @@ app.set("trust proxy", 1);
 
 // Session configuration
 const PgStore = connectPgSimple(session);
-const sessionStore = process.env.DATABASE_URL ? new PgStore({
-  createTableIfMissing: true,
-  conObject: {
-    connectionString: process.env.DATABASE_URL,
-  },
-}) : new (require('memorystore')(session))({ checkPeriod: 86400000 });
 
+const sessionStore = process.env.DATABASE_URL
+  ? new PgStore({
+      createTableIfMissing: true,
+      conString: process.env.DATABASE_URL,
+    })
+  : new (require("memorystore")(session))({ checkPeriod: 86400000 });
 app.use(session({
   store: sessionStore,
   secret: process.env.SESSION_SECRET || 'mcefl-secret-key-change-in-production',
