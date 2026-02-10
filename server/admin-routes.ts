@@ -225,16 +225,6 @@ export function setupAdminRoutes(app: Express) {
     }
   });
 
-  // ===== DONATIONS =====
-  app.get("/api/admin/donations", requireAdminOrStaff, async (req, res) => {
-    try {
-      const donations = await storage.getDonations();
-      res.json(donations);
-    } catch (error: any) {
-      res.status(500).json({ message: "Error fetching donations: " + error.message });
-    }
-  });
-
   // ===== NEWSLETTERS =====
   app.get("/api/admin/newsletters", requireAdminOrStaff, async (req, res) => {
     try {
