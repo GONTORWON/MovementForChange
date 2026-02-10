@@ -15,11 +15,10 @@ const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SEC
 }) : null;
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  
   // ===== HEALTH CHECK =====
   app.get("/api/health", async (_req, res) => {
     try {
-      const testQuery = await storage.getContactSubmissions();
+      await storage.getContactSubmissions();
       res.json({ 
         status: "ok", 
         database: "connected",
@@ -33,7 +32,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+// ===== ONE-TIME ADMIN SEED (TEMPORARY) =====
+app.post("/api/admin/seed", async (req, res) => {
+  const secret = req.get("x-seed-secret");
+  
+  if (!process.env.SEED_SECRET || secret !== process.env.SEED_SECRET) {
+    return res.status(403).json({ message: "Forbidden" });
+  }
 
+  const usersToSeed = [
+    { username: "superadmin", password: "ChangeMe123!", role: "super_admin" },
+    { username: "admin1", password: "ChangeMe123!", role: "admin" },
+    { username: "admin2", password: "ChangeMe123!", role: "admin" },
+  ];
+
+  const results: any[] = [];
+
+  for (const u of usersToSeed) {
+    const existing = await storage.getUserByUsername(u.username);
+    if (existing) {
+      results.push({ username: u.username, status: "exists" });
+      continue;
+    }
+    await authUtils.createUser(u.username, u.password, undefined, undefined, u.role);
+    results.push({ username: u.username, status: "created" });
+  }
+
+  return res.json({ ok: true, results });
+});
   // ===== AUTH ROUTES =====
   app.post("/api/auth/login", async (req, res) => {
     try {
