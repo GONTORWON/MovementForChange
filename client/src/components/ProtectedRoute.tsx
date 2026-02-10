@@ -4,8 +4,14 @@ import { useEffect } from "react";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requiredRole?: "admin" | "staff";
+  requiredRole?: "super_admin" | "admin" | "staff";
 }
+
+const roleRank: Record<NonNullable<ProtectedRouteProps["requiredRole"]>, number> = {
+  staff: 1,
+  admin: 2,
+  super_admin: 3,
+};
 
 export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
   const { user, isLoading } = useAuth();
@@ -28,21 +34,23 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
     );
   }
 
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
-  if (requiredRole && user.role !== "admin" && user.role !== requiredRole) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold">Access Denied</h1>
-          <p className="text-muted-foreground mt-2">
-            You don't have permission to access this page
-          </p>
+  // ✅ super_admin can access everything admin/staff can
+  if (requiredRole) {
+    const userRole = (user.role ?? "staff") as keyof typeof roleRank;
+    if (!roleRank[userRole] || roleRank[userRole] < roleRank[requiredRole]) {
+      return (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold">Access Denied</h1>
+            <p className="text-muted-foreground mt-2">
+              You don't have permission to access this page
+            </p>
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
   }
 
   return <>{children}</>;
